@@ -31,16 +31,18 @@ run: all
 clean:
 	rm -rf build
 
-# rules
-$(BUILD_DIR)/$(EXECUTABLE): $(OBJECTS)
+# main rules (technically targets)
+$(BUILD_DIR)/$(EXECUTABLE): $(BUILD_DIR)/bootloader.bin $(BUILD_DIR)/kernel.bin
+	cat $^ > $@
+
+$(BUILD_DIR)/kernel.bin: $(OBJECTS)
 	$(LD) $(LDFLAGS) -o $@ $^
 
+$(BUILD_DIR)/bootloader.bin: $(SRC_DIR)/bootloader/bootloader.asm
+	$(AS) $(ASFLAGS) -o $@ $<
+
+# general rules
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	mkdir -p $(dir $@)
 
 	$(CC) $(CCFLAGS) -o $@ $<
-
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.asm
-	mkdir -p $(dir $@)
-
-	$(AS) $(ASFLAGS) -o $@ $<
