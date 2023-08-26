@@ -38,7 +38,7 @@ $(BUILD_DIR)/$(EXECUTABLE): $(BUILD_DIR)/bootloader.bin $(BUILD_DIR)/kernel.bin
 $(BUILD_DIR)/kernel.bin: $(OBJECTS)
 	$(LD) $(LDFLAGS) -o $@ $^
 
-$(BUILD_DIR)/bootloader.bin: $(SRC_DIR)/bootloader/bootloader.asm
+$(BUILD_DIR)/bootloader.bin: $(SRC_DIR)/bootloader/main.asm
 	$(AS) $(ASFLAGS) -o $@ $<
 
 # general rules
