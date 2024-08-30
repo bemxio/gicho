@@ -1,16 +1,18 @@
-# constants
+# compilers
 CC = ia16-elf-gcc
-CCFLAGS = -c -ffreestanding
+CCFLAGS = -ffreestanding
 
 LD = ia16-elf-ld
-LDFLAGS = -Ttext 0x1000
+LDFLAGS = -Ttext 0x7d00 --oformat binary
 
 AS = nasm
 ASFLAGS = -f bin
 
+# emulator
 QEMU = qemu-system-i386
 QEMUFLAGS = -accel kvm
 
+# directories and files
 SRC_DIR = src
 BUILD_DIR = build
 
@@ -23,26 +25,26 @@ OBJECTS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SOURCES))
 .PHONY: all run clean
 
 # targets
-all: $(BUILD_DIR) $(BUILD_DIR)/$(EXECUTABLE)
+all: $(BUILD_DIR)/$(EXECUTABLE)
 
-run: all
+run: $(BUILD_DIR)/$(EXECUTABLE)
 	$(QEMU) $(QEMUFLAGS) -drive format=raw,file=$<
 
 clean:
 	rm -rf build
 
-# main rules (technically targets)
 $(BUILD_DIR)/$(EXECUTABLE): $(BUILD_DIR)/bootloader.bin $(BUILD_DIR)/kernel.bin
 	cat $^ > $@
 
+$(BUILD_DIR)/bootloader.bin: $(SRC_DIR)/bootloader/main.asm | $(BUILD_DIR)
+	$(AS) $(ASFLAGS) $^ -o $@
+
 $(BUILD_DIR)/kernel.bin: $(OBJECTS)
-	$(LD) $(LDFLAGS) -o $@ $^
+	$(LD) $(LDFLAGS) $^ -o $@
 
-$(BUILD_DIR)/bootloader.bin: $(SRC_DIR)/bootloader/main.asm
-	$(AS) $(ASFLAGS) -o $@ $<
-
-# general rules
+# rules
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
-	mkdir -p $(dir $@)
+	$(CC) $(CCFLAGS) -c $^ -o $@
 
-	$(CC) $(CCFLAGS) -o $@ $<
+$(BUILD_DIR):
+	mkdir -p $@/kernel
