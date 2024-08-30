@@ -3,10 +3,10 @@ CC = ia16-elf-gcc
 CCFLAGS = -ffreestanding
 
 LD = ia16-elf-ld
-LDFLAGS = -Ttext 0x7d00 --oformat binary
+LDFLAGS = -Ttext 0x7e00 --oformat binary
 
 AS = nasm
-ASFLAGS = -f bin
+#ASFLAGS =
 
 # emulator
 QEMU = qemu-system-i386
@@ -37,14 +37,17 @@ $(BUILD_DIR)/$(EXECUTABLE): $(BUILD_DIR)/bootloader.bin $(BUILD_DIR)/kernel.bin
 	cat $^ > $@
 
 $(BUILD_DIR)/bootloader.bin: $(SRC_DIR)/bootloader/main.asm | $(BUILD_DIR)
-	$(AS) $(ASFLAGS) $^ -o $@
+	$(AS) -f bin $^ -o $@
 
-$(BUILD_DIR)/kernel.bin: $(OBJECTS)
+$(BUILD_DIR)/kernel.bin: $(BUILD_DIR)/kernel/entry_point.o $(OBJECTS)
 	$(LD) $(LDFLAGS) $^ -o $@
 
 # rules
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CCFLAGS) -c $^ -o $@
+
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.asm
+	$(AS) -f elf $^ -o $@
 
 $(BUILD_DIR):
 	mkdir -p $@/kernel
