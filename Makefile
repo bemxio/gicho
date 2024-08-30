@@ -36,18 +36,18 @@ clean:
 $(BUILD_DIR)/$(EXECUTABLE): $(BUILD_DIR)/bootloader.bin $(BUILD_DIR)/kernel.bin
 	cat $^ > $@
 
-$(BUILD_DIR)/bootloader.bin: $(SRC_DIR)/bootloader/main.asm | $(BUILD_DIR)
-	$(AS) -f bin $^ -o $@
+$(BUILD_DIR)/bootloader.bin: $(SRC_DIR)/bootloader/main.asm $(wildcard $(SRC_DIR)/bootloader/*.asm) | $(BUILD_DIR)
+	$(AS) -f bin $< -o $@
 
 $(BUILD_DIR)/kernel.bin: $(BUILD_DIR)/kernel/entry_point.o $(OBJECTS)
 	$(LD) $(LDFLAGS) $^ -o $@
 
 # rules
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
 	$(CC) $(CCFLAGS) -c $^ -o $@
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.asm
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.asm | $(BUILD_DIR)
 	$(AS) -f elf $^ -o $@
 
 $(BUILD_DIR):
-	mkdir -p $@/kernel
+	mkdir -p $@/kernel/lib
