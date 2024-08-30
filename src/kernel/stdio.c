@@ -1,40 +1,40 @@
 #include "stdio.h"
 
 char getchar() {
-    char character;
+    char c;
 
     __asm__ (
         "mov $0x00, %%ah\n"
         "int $0x16\n"
         "mov %%al, %0\n"
-        : "=r" (character)
+        : "=r" (c)
     );
 
-    return character;
+    return c;
 }
 
-char putchar(char character) {
+char putchar(char c) {
     __asm__ (
         "mov $0x0e, %%ah\n"
         "mov %0, %%al\n"
         "int $0x10\n"
-        :: "r" (character)
+        :: "r" (c)
     );
 
-    return character;
+    return c;
 }
 
-char* gets(char* string) {
-    char character;
-    int index = 0;
+char* gets(char* s) {
+    char c;
+    size_t i = 0;
 
-    while ((character = getchar()) != '\r') {
-        if (character == '\b') {
-            if (index == 0) {
+    while ((c = getchar()) != '\r') {
+        if (c == '\b') {
+            if (i == 0) {
                 continue;
             }
 
-            string[--index] = '\0';
+            s[--i] = '\0';
 
             putchar('\b');
             putchar(' ');
@@ -43,29 +43,29 @@ char* gets(char* string) {
             continue;
         }
 
-        string[index] = character;
-        putchar(character);
+        s[i] = c;
+        putchar(c);
 
-        index++;
+        i++;
     }
 
-    string[index] = '\0';
+    s[i] = '\0';
 
     putchar('\r');
     putchar('\n');
 
-    return string;
+    return s;
 }
 
-int puts(const char* string) {
-    int index = 0;
+int puts(const char* s) {
+    size_t i = 0;
 
-    while (string[index] != '\0') {
-        putchar(string[index++]);
+    while (s[i] != '\0') {
+        putchar(s[i++]);
     }
 
     putchar('\r');
     putchar('\n');
 
-    return index;
+    return i;
 }

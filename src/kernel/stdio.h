@@ -1,10 +1,12 @@
 #ifndef STDIO_H
 #define STDIO_H
 
-char getchar();
-char putchar(char character);
+#include <stddef.h>
 
-char* gets(char* string);
-int puts(const char *string);
+char getchar();
+char putchar(char c);
+
+char* gets(char* s);
+int puts(const char *s);
 
 #endif
