@@ -6,6 +6,7 @@
 
 size_t strlen(const char* s);
 int strcmp(const char* s1, const char* s2);
-char* strtok(char* s, const char* d);
+char* strrev(char* s);
+char* strtok(char* s, const char* delim);
 
 #endif

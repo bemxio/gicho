@@ -19,7 +19,20 @@ int strcmp(const char* s1, const char* s2) {
     return *(const unsigned char*)s1 - *(const unsigned char*)s2;
 }
 
-char* strtok(char* s, const char* d) {
+char* strrev(char* s) {
+    size_t len = strlen(s) - 1;
+
+    for (size_t i = 0; i < len / 2; i++) {
+        char temp = s[i];
+
+        s[i] = s[len - i];
+        s[len - i] = temp;
+    }
+
+    return s;
+}
+
+char* strtok(char* s, const char* delim) {
     static char* p = NULL;
 
     if (s != NULL) {
@@ -30,13 +43,13 @@ char* strtok(char* s, const char* d) {
 
     s = p;
 
-    size_t l = strlen(d);
-    bool f = false;
+    bool flag = false;
+    size_t len = strlen(delim);
 
-    while (*p != '\0' && !f) {
-        for (size_t i = 0; i < l; i++) {
-            if (*p == d[i]) {
-                f = true; break;
+    while (*p != '\0' && !flag) {
+        for (size_t i = 0; i < len; i++) {
+            if (*p == delim[i]) {
+                flag = true; break;
             }
         }
 

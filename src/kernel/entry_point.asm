@@ -5,4 +5,7 @@ global _start ; set the entry point
 
 _start:
     call main ; call the main function
-    jmp $ ; infinite loop in case the function returns
+
+    ; shut down the system in case the kernel returns
+    cli ; disable interrupts
+    hlt ; halt the CPU

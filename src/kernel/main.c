@@ -18,7 +18,7 @@ void main() {
 
     vidmodset(0x03);
 
-    puts("Gicho v1.0.0\r\n");
+    puts("Welcome to Gicho!\r\n");
     puts("Type `help` for a list of commands.\r\n");
 
     while (true) {
@@ -45,6 +45,4 @@ void main() {
             puts("Command not found.\r\n");
         }
     }
-
-    return 0;
 }
