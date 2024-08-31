@@ -1,4 +1,5 @@
 #include "lib/stdio.h"
+#include "lib/stdlib.h"
 #include "lib/string.h"
 
 #include <stdbool.h>
@@ -31,14 +32,18 @@ void main() {
             puts("Available commands:\r\n");
             puts("  help - Display this message.\r\n");
             puts("  echo - Echo the input.\r\n");
+            puts("  clear - Clear the screen.\r\n");
+            //puts("  peek - Read a byte at a specified address.\r\n");
+            //puts("  poke - Write a byte in a specified address.\r\n");
         } else if (strcmp(token, "echo") == 0) {
             while ((token = strtok(NULL, " ")) != NULL) {
                 puts(token);
                 putchar(' ');
             }
 
-            putchar('\r');
-            putchar('\n');
+            puts("\r\n");
+        } else if (strcmp(token, "clear") == 0) {
+            vidmodset(0x03);
         } else if (input[0] == '\0') {
             continue;
         } else {

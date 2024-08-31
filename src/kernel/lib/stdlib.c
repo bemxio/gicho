@@ -2,9 +2,11 @@
 
 int atoi(const char* nptr) {
     int n = 0;
+    long m = 1;
 
-    for (int i = strlen(nptr) - 1, m = 1; i >= 0; i--, m *= 10) {
+    for (int i = strlen(nptr) - 1; i >= 0; i--) {
         n += (nptr[i] - 48) * m;
+        m *= 10;
     }
 
     return n;
