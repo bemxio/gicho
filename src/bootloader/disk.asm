@@ -21,4 +21,7 @@ disk_error:
     call print ; print the error message
     call print_hex ; print the error code in hex
 
+    mov si, LINE_BREAK ; load the address of the line break character
+    call print ; print the newline character
+
     hlt ; halt the system

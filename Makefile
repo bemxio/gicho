@@ -18,7 +18,7 @@ BUILD_DIR = build
 
 EXECUTABLE = gicho.bin
 
-SOURCES = $(shell find $(SRC_DIR) -name '*.c')
+SOURCES = $(shell find $(SRC_DIR) -name *.c)
 OBJECTS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SOURCES))
 
 # phony

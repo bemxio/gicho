@@ -14,8 +14,9 @@ jmp bx ; jump to the kernel
 %include "src/bootloader/disk.asm"
 
 ; strings
-START_MESSAGE db "Starting Gicho...", 0x0d, 0x0a, 0x00 ; the start message
-DISK_ERROR_MESSAGE db "Error: disk read failed with code 0x", 0x00 ; the error message
+START_MESSAGE db "Starting Gicho...", 0x0d, 0x0a, 0x00
+DISK_ERROR_MESSAGE db "Error: disk read failed with code 0x", 0x00
+LINE_BREAK db 0x0d, 0x0a, 0x00
 
 ; pad the rest of the sector with zeros
 times 510 - ($ - $$) db 0x00
