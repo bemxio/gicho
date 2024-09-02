@@ -8,17 +8,55 @@ char getchar() {
         "int $0x16\n"
         "mov %%al, %0\n"
         : "=r" (c)
+        :: "ah", "al"
     );
 
     return c;
 }
 
-char putchar(char c) {
+char _putchar(char c, char attr) {
+    char x;
+    char y;
+
     __asm__ (
-        "mov $0x0e, %%ah\n"
-        "mov %0, %%al\n"
+        "mov $0x03, %%ah\n"
+        "xor %%bh, %%bh\n"
         "int $0x10\n"
-        :: "r" (c)
+        "mov %%dl, %0\n"
+        "mov %%dh, %1\n"
+        : "=r" (x), "=r" (y)
+        :: "ah", "bh", "dl", "dh"
+    );
+
+    if (c >= 32 && c <= 126) {
+        __asm__ (
+            "mov $0x09, %%ah\n"
+            "xor %%bh, %%bh\n"
+            "mov $0x01, %%cx\n"
+            "mov %0, %%al\n"
+            "mov %1, %%bl\n"
+            "int $0x10\n"
+            :: "r" (c), "r" (attr)
+            : "ah", "bh", "cx", "al", "bl"
+        );
+
+        x++;
+    } else if (c == '\r') {
+        x = 0;
+    } else if (c == '\n') {
+        y++;
+    } else if (c == '\b') {
+        x--;
+    }
+
+    __asm__ (
+        "mov $0x02, %%ah\n"
+        "xor %%bh, %%bh\n"
+        "mov %0, %%dl\n"
+        "mov %1, %%dh\n"
+        "int $0x10\n"
+        :: "r" (x), "r" (y)
+        : "ah", "bh", "dl", "dh"
     );
 
     return c;

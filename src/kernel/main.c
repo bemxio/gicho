@@ -10,6 +10,7 @@ void vidmodset(char mode) {
         "mov %0, %%al\n"
         "int $0x10"
         :: "r" (mode)
+        : "ah", "al"
     );
 }
 
@@ -41,7 +42,8 @@ void main() {
                 putchar(' ');
             }
 
-            puts("\r\n");
+            putchar('\r');
+            putchar('\n');
         } else if (strcmp(token, "clear") == 0) {
             vidmodset(0x03);
         } else if (input[0] == '\0') {
