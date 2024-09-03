@@ -10,7 +10,7 @@ AS = nasm
 
 # emulator
 QEMU = qemu-system-i386
-QEMUFLAGS = -accel kvm
+#QEMUFLAGS =
 
 # directories and files
 SRC_DIR = src
@@ -28,7 +28,7 @@ OBJECTS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SOURCES))
 all: $(BUILD_DIR)/$(EXECUTABLE)
 
 run: $(BUILD_DIR)/$(EXECUTABLE)
-	$(QEMU) $(QEMUFLAGS) -drive format=raw,file=$<
+	$(QEMU) -drive format=raw,file=$<
 
 clean:
 	rm -rf build
