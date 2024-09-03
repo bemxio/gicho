@@ -1,5 +1,5 @@
 # Gicho
-*Gicho* (기초, "basic" in Korean) is a simple operating system running in 16-bit real mode. It is written in C and Assembly, made for learning purposes and for fun.
+*Gicho* (기초, "basic" in Korean) is a simple operating system running in 16-bit real mode. Written in C and Assembly, made for learning purposes and for fun.
 
 It has a CLI interface that supports basic low-level commands like `peek`, `poke`, etc. It can also run external code from a disk.
 
