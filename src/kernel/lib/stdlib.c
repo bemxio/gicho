@@ -12,6 +12,30 @@ int atoi(const char* nptr) {
     return n;
 }
 
+long atol(const char* nptr) {
+    long n = 0;
+    long m = 1;
+
+    for (int i = strlen(nptr) - 1; i >= 0; i--) {
+        n += (nptr[i] - 48) * m;
+        m *= 10;
+    }
+
+    return n;
+}
+
+unsigned long atoul(const char* nptr) {
+    unsigned long n = 0;
+    long m = 1;
+
+    for (int i = strlen(nptr) - 1; i >= 0; i--) {
+        n += (nptr[i] - 48) * m;
+        m *= 10;
+    }
+
+    return n;
+}
+
 char* itoa(int n, char* buf) {
     int i = 0;
 

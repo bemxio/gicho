@@ -9,8 +9,8 @@ void help() {
     puts("  help - Display this message.\r\n");
     puts("  echo - Echo the input.\r\n");
     puts("  clear - Clear the screen.\r\n");
-    //puts("  peek - Read a byte at a specified address.\r\n");
-    //puts("  poke - Write a byte in a specified address.\r\n");
+    puts("  peek - Read a byte at a specified address.\r\n");
+    //puts("  poke - Write a byte at a specified address.\r\n");
 }
 
 void echo(char* token) {
@@ -35,6 +35,40 @@ void clear() {
     );
 }
 
+void peek(char* token) {
+    if ((token = strtok(NULL, " ")) == NULL) {
+        puts("Usage: peek <address>\r\n"); return;
+    }
+
+    unsigned long address = atoul(token);
+
+    unsigned int segment = address >> 16;
+    unsigned int offset = address & 0xffff;
+
+    unsigned char value;
+    char* buffer;
+
+    __asm__ (
+        "movw %1, %%ax\n"
+        "movw %2, %%si\n"
+        "movw %%ax, %%es\n"
+        "movb %%es:(%%si), %0\n"
+        : "=r" (value) 
+        : "r" (segment), "r" (offset)
+        : "ax", "si", "es"
+    );
+
+    itoa(value, buffer);
+    puts(buffer);
+
+    putchar('\r');
+    putchar('\n');
+}
+
+void poke(char* token) {
+    return;
+}
+
 void main() {
     char input[127];
     char* token;
@@ -56,6 +90,10 @@ void main() {
             echo(token);
         } else if (strcmp(token, "clear") == 0) {
             clear();
+        } else if (strcmp(token, "peek") == 0) {
+            peek(token);
+        } else if (strcmp(token, "poke") == 0) {
+            poke(token);
         } else if (input[0] == '\0') {
             continue;
         } else {
