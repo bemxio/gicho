@@ -10,7 +10,7 @@ void help() {
     puts("  echo - Echo the input.\r\n");
     puts("  clear - Clear the screen.\r\n");
     puts("  peek - Read a byte at a specified address.\r\n");
-    //puts("  poke - Write a byte at a specified address.\r\n");
+    puts("  poke - Write a byte at a specified address.\r\n");
 }
 
 void echo(char* token) {
@@ -66,7 +66,30 @@ void peek(char* token) {
 }
 
 void poke(char* token) {
-    return;
+    if ((token = strtok(NULL, " ")) == NULL) {
+        puts("Usage: poke <address> <value>\r\n"); return;
+    }
+
+    unsigned long address = atoul(token);
+
+    if ((token = strtok(NULL, " ")) == NULL) {
+        puts("Usage: poke <address> <value>\r\n"); return;
+    }
+
+    unsigned char value = atoul(token);
+
+    unsigned int segment = address >> 16;
+    unsigned int offset = address & 0xffff;
+
+    __asm__ (
+        "movw %0, %%ax\n"
+        "movw %1, %%si\n"
+        "movb %2, %%bl\n"
+        "movw %%ax, %%es\n"
+        "movb %%bl, %%es:(%%si)\n"
+        :: "r" (segment), "r" (offset), "r" (value)
+        : "ax", "si", "es"
+    );
 }
 
 void main() {
