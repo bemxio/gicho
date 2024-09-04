@@ -3,7 +3,7 @@ CC = ia16-elf-gcc
 CCFLAGS = -ffreestanding
 
 LD = ia16-elf-ld
-LDFLAGS = -Ttext 0x7e00 --oformat binary
+LDFLAGS = -Ttext 0x0500 --oformat binary
 
 AS = nasm
 #ASFLAGS =

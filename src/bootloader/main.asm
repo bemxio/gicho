@@ -4,7 +4,7 @@
 mov si, START_MESSAGE ; set the address of the start message
 call print ; print the start message
 
-mov bx, 0x7e00 ; set the address for the kernel
+mov bx, 0x0500 ; set the address for the kernel
 call disk_read ; read the kernel code
 
 jmp bx ; jump to the kernel
