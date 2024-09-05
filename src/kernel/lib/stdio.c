@@ -28,7 +28,7 @@ char _putchar(char c, char attr, ...) {
         :: "ah", "bh", "dl", "dh"
     );
 
-    if (c >= 32 && c <= 126) {
+    if (c >= ' ' && c <= '~') {
         __asm__ (
             "mov $0x09, %%ah\n"
             "xor %%bh, %%bh\n"

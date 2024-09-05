@@ -30,18 +30,20 @@ void clear() {
     __asm__ (
         "mov $0x00, %%ah\n"
         "mov %0, %%al\n"
-        "int $0x10"
+        "int $0x10\n"
         :: "r" (mode)
         : "ah", "al"
     );
 }
 
 void peek(char* token) {
+    unsigned long address;
+
     if ((token = strtok(NULL, " ")) == NULL) {
         puts("Usage: peek <address>\r\n"); return;
     }
 
-    unsigned long address = atoul(token);
+    address = atoul(token);
 
     unsigned int segment = address >> 16;
     unsigned int offset = address & 0xffff;
@@ -67,17 +69,20 @@ void peek(char* token) {
 }
 
 void poke(char* token) {
-    if ((token = strtok(NULL, " ")) == NULL) {
-        puts("Usage: poke <address> <value>\r\n"); return;
-    }
-
-    unsigned long address = atoul(token);
+    unsigned long address;
+    unsigned char value;
 
     if ((token = strtok(NULL, " ")) == NULL) {
         puts("Usage: poke <address> <value>\r\n"); return;
     }
 
-    unsigned char value = atoul(token);
+    address = atoul(token);
+
+    if ((token = strtok(NULL, " ")) == NULL) {
+        puts("Usage: poke <address> <value>\r\n"); return;
+    }
+
+    value = atoul(token);
 
     unsigned int segment = address >> 16;
     unsigned int offset = address & 0xffff;
@@ -94,12 +99,13 @@ void poke(char* token) {
 }
 
 void _int(char* token) {
+    unsigned char interrupt;
+
     if ((token = strtok(NULL, " ")) == NULL) {
         puts("Usage: int <interrupt> [registers]\r\n"); return;
     }
 
-    unsigned char interrupt = atoul(token);
-    unsigned int value;
+    interrupt = atoul(token);
 
     unsigned int ax = 0;
     unsigned int bx = 0;
@@ -107,7 +113,7 @@ void _int(char* token) {
     unsigned int dx = 0;
 
     while ((token = strtok(NULL, " ")) != NULL) {
-        value = atoul(token + 3);
+        unsigned int value = atoul(token + 3);
 
         switch (token[0]) {
             case 'a':

@@ -5,6 +5,10 @@ unsigned long atoul(const char* nptr) {
     long m = 1;
 
     for (int i = strlen(nptr) - 1; i >= 0; i--) {
+        if (nptr[i] < '0' || nptr[i] > '9') {
+            return 0;
+        }
+
         n += (nptr[i] - 48) * m;
         m *= 10;
     }
