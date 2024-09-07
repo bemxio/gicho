@@ -12,6 +12,8 @@ void help() {
     puts("  peek - Read a byte at a specified address.\r\n");
     puts("  poke - Write a byte at a specified address.\r\n");
     puts("  int - Call a BIOS interrupt with optional register values.\r\n");
+    puts("  read - Read sectors from a specified disk.\r\n");
+    //puts("  write - Write sectors on a specified disk.\r\n");
 }
 
 void echo(char* token) {
@@ -196,6 +198,66 @@ void _int(char* token) {
     );
 }
 
+void read(char* token) {
+    unsigned char drive;
+    unsigned char amount;
+    unsigned long position;
+    unsigned long address;
+
+    if ((token = strtok(NULL, " ")) == NULL) {
+        puts("Usage: read <drive number> <sector amount> [offset] [memory address]\r\n"); return;
+    }
+
+    drive = atoul(token);
+
+    if ((token = strtok(NULL, " ")) == NULL) {
+        puts("Usage: read <drive number> <sector amount> [offset] [memory address]]\r\n"); return;
+    }
+
+    amount = atoul(token);
+
+    if ((token = strtok(NULL, " ")) != NULL) {
+        position = atoul(token);
+    } else {
+        position = 0;
+    }
+
+    if ((token = strtok(NULL, " ")) != NULL) {
+        address = atoul(token);
+    } else {
+        address = 0x7e00;
+    }
+
+    if (position > 1033199) {
+        puts("Offset out of range.\r\n"); return;
+    }
+
+    unsigned int segment = address >> 16;
+    unsigned int offset = address & 0xffff;
+
+    unsigned int cylinders = position / (16 * 63);
+    unsigned char heads = (position / 63) % 16;
+    unsigned char sectors = (position % 63) + 1;
+
+    unsigned char ch = cylinders & 0xff;
+    unsigned char cl = (cylinders >> 8) + sectors;
+
+    __asm__ (
+        "movb $0x02, %%ah\n"
+        "movb %0, %%al\n"
+        "movb %1, %%ch\n"
+        "movb %2, %%cl\n"
+        "movb %3, %%dh\n"
+        "movb %4, %%dl\n"
+        "movw %5, %%bx\n"
+        "movw %%bx, %%es\n"
+        "movw %6, %%bx\n"
+        "int $0x13\n"
+        :: "g" (amount), "g" (ch), "g" (cl), "g" (heads), "g" (drive), "g" (segment), "g" (offset)
+        : "ah", "al", "ch", "cl", "dh", "dl", "bx", "es"
+    );
+}
+
 void main() {
     char input[127];
     char* token;
@@ -223,6 +285,8 @@ void main() {
             poke(token);
         } else if (strcmp(token, "int") == 0) {
             _int(token);
+        } else if (strcmp(token, "read") == 0) {
+            read(token);
         } else if (input[0] == '\0') {
             continue;
         } else {
