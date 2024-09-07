@@ -1,12 +1,15 @@
 # software
-CC = ia16-elf-gcc
+PREFIX = ia16-elf
+
+CC = $(PREFIX)-gcc
 CCFLAGS = -ffreestanding
 
-LD = ia16-elf-ld
+LD = $(PREFIX)-ld
 LDFLAGS = -Ttext 0x0500 --oformat binary
 LDLIBS = $(shell $(CC) -print-libgcc-file-name)
 
 AS = nasm
+GDB = gdb
 QEMU = qemu-system-i386
 
 # directories and files
@@ -26,6 +29,10 @@ all: $(BUILD_DIR)/$(EXECUTABLE)
 
 run: $(BUILD_DIR)/$(EXECUTABLE)
 	$(QEMU) -drive format=raw,file=$<
+
+debug: $(BUILD_DIR)/$(EXECUTABLE)
+	$(QEMU) -drive format=raw,file=$< -s -S &
+	$(GDB) -ex "target remote localhost:1234"
 
 clean:
 	rm -rf build
