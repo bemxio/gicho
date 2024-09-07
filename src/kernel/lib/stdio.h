@@ -4,14 +4,14 @@
 #include <stddef.h>
 
 char getchar();
-char _putchar(char c, char attr, ...);
+char __putchar(char c, char attr, ...);
 
 char* gets(char* s);
-int _puts(const char *s, char attr, ...);
+int __puts(const char *s, char attr, ...);
 
 #define DEFAULT_ATTRIBUTE 0x07
 
-#define putchar(c, ...) _putchar(c, ##__VA_ARGS__, DEFAULT_ATTRIBUTE)
-#define puts(s, ...) _puts(s, ##__VA_ARGS__, DEFAULT_ATTRIBUTE)
+#define putchar(c, ...) __putchar(c, ##__VA_ARGS__, DEFAULT_ATTRIBUTE)
+#define puts(s, ...) __puts(s, ##__VA_ARGS__, DEFAULT_ATTRIBUTE)
 
 #endif

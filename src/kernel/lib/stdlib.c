@@ -16,13 +16,13 @@ unsigned long atoul(const char* nptr) {
     return n;
 }
 
-char* itoa(int n, char* buf) {
+char* ultoa(unsigned long n, char* buf) {
     int i = 0;
 
     if (n == 0) {
         buf[i++] = '0';
     } else {
-        for (int x = n; x > 0; x /= 10) {
+        for (unsigned long x = n; x > 0; x /= 10) {
             buf[i++] = x % 10 + 48;
         }
     }

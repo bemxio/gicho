@@ -14,7 +14,7 @@ char getchar() {
     return c;
 }
 
-char _putchar(char c, char attr, ...) {
+char __putchar(char c, char attr, ...) {
     char x;
     char y;
 
@@ -95,7 +95,7 @@ char* gets(char* s) {
     return s;
 }
 
-int _puts(const char* s, char attr, ...) {
+int __puts(const char* s, char attr, ...) {
     size_t i = 0;
 
     while (s[i] != '\0') {

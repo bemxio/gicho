@@ -1,16 +1,13 @@
-# compilers
+# software
 CC = ia16-elf-gcc
 CCFLAGS = -ffreestanding
 
 LD = ia16-elf-ld
 LDFLAGS = -Ttext 0x0500 --oformat binary
+LDLIBS = $(shell $(CC) -print-libgcc-file-name)
 
 AS = nasm
-#ASFLAGS =
-
-# emulator
 QEMU = qemu-system-i386
-#QEMUFLAGS =
 
 # directories and files
 SRC_DIR = src
@@ -40,7 +37,7 @@ $(BUILD_DIR)/bootloader.bin: $(SRC_DIR)/bootloader/main.asm $(wildcard $(SRC_DIR
 	$(AS) -f bin $< -o $@
 
 $(BUILD_DIR)/kernel.bin: $(BUILD_DIR)/kernel/entry_point.o $(OBJECTS)
-	$(LD) $(LDFLAGS) $^ -o $@
+	$(LD) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
 # rules
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)

@@ -61,7 +61,7 @@ void peek(char* token) {
         : "ax", "si", "es"
     );
 
-    itoa(value, buffer);
+    ultoa(value, buffer);
     puts(buffer);
 
     putchar('\r');
