@@ -258,6 +258,25 @@ void read(char* token) {
         :: "g" (amount), "g" (ch), "g" (cl), "g" (heads), "g" (drive), "g" (segment), "g" (offset)
         : "ah", "al", "ch", "cl", "dh", "dl", "bx", "es"
     );
+
+    unsigned char status;
+
+    __asm__ (
+        "movb %%ah, %0\n"
+        : "=r" (status)
+        :: "al"
+    );
+
+    if (status != 0) {
+        puts("Disk read failed with error code ");
+
+        ultoa(status, token);
+        puts(token);
+        
+        putchar('.');
+        putchar('\r');
+        putchar('\n');
+    }
 }
 
 void write(char* token) {
@@ -318,4 +337,23 @@ void write(char* token) {
         :: "g" (amount), "g" (ch), "g" (cl), "g" (heads), "g" (drive), "g" (segment), "g" (offset)
         : "ah", "al", "ch", "cl", "dh", "dl", "bx", "es"
     );
+
+    unsigned char status;
+
+    __asm__ (
+        "movb %%ah, %0\n"
+        : "=r" (status)
+        :: "al"
+    );
+
+    if (status != 0) {
+        puts("Disk write failed with error code ");
+
+        ultoa(status, token);
+        puts(token);
+
+        putchar('.');
+        putchar('\r');
+        putchar('\n');
+    }
 }
