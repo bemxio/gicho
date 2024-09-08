@@ -243,7 +243,7 @@ void read(char* token) {
     unsigned char sectors = (position % 63) + 1;
 
     unsigned char ch = cylinders & 0xff;
-    unsigned char cl = (cylinders >> 8) + sectors;
+    unsigned char cl = ((cylinders >> 2) & 0xc0) | sectors;
 
     __asm__ (
         "movb $0x02, %%ah\n"
@@ -322,7 +322,7 @@ void write(char* token) {
     unsigned char sectors = (position % 63) + 1;
 
     unsigned char ch = cylinders & 0xff;
-    unsigned char cl = (cylinders >> 8) + sectors;
+    unsigned char cl = ((cylinders >> 2) & 0xc0) | sectors;
 
     __asm__ (
         "movb $0x03, %%ah\n"
