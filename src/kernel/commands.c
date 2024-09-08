@@ -372,11 +372,11 @@ void run(char* token) {
     unsigned int offset = address & 0xffff;
 
     __asm__ (
-        "movw %0, %%ax\n"
-        "movw %1, %%si\n"
-        "movw %%ax, %%es\n"
-        "call %%es:(%%si)\n"
+        "push %0\n"
+        "push %1\n"
+        "retf\n"
         :: "g" (segment), "g" (offset)
-        : "ax", "si", "es"
     );
+
+    clear();
 }
