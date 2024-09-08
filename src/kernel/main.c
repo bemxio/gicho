@@ -34,6 +34,8 @@ void main() {
             read(token);
         } else if (strcmp(token, "write") == 0) {
             write(token);
+        } else if (strcmp(token, "run") == 0) {
+            run(token);
         } else if (input[0] == '\0') {
             continue;
         } else {

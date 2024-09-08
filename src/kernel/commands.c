@@ -16,6 +16,7 @@ void help() {
     puts("  int - Call a BIOS interrupt with optional register values.\r\n");
     puts("  read - Read sectors from a specified disk.\r\n");
     puts("  write - Write sectors to a specified disk.\r\n");
+    puts("  run - Run a program at a specified address in memory.\r\n");
 }
 
 void echo(char* token) {
@@ -35,7 +36,7 @@ void clear() {
         "mov $0x00, %%ah\n"
         "mov %0, %%al\n"
         "int $0x10\n"
-        :: "r" (mode)
+        :: "g" (mode)
         : "ah", "al"
     );
 }
@@ -61,7 +62,7 @@ void peek(char* token) {
         "movw %%ax, %%es\n"
         "movb %%es:(%%si), %0\n"
         : "=r" (value) 
-        : "r" (segment), "r" (offset)
+        : "g" (segment), "g" (offset)
         : "ax", "si", "es"
     );
 
@@ -97,7 +98,7 @@ void poke(char* token) {
         "movb %2, %%bl\n"
         "movw %%ax, %%es\n"
         "movb %%bl, %%es:(%%si)\n"
-        :: "r" (segment), "r" (offset), "r" (value)
+        :: "g" (segment), "g" (offset), "g" (value)
         : "ax", "si", "bl", "es"
     );
 }
@@ -356,4 +357,26 @@ void write(char* token) {
         putchar('\r');
         putchar('\n');
     }
+}
+
+void run(char* token) {
+    unsigned long address;
+
+    if ((token = strtok(NULL, " ")) == NULL) {
+        address = 0x7e00;
+    } else {
+        address = atoul(token);
+    }
+
+    unsigned int segment = address >> 16;
+    unsigned int offset = address & 0xffff;
+
+    __asm__ (
+        "movw %0, %%ax\n"
+        "movw %1, %%si\n"
+        "movw %%ax, %%es\n"
+        "call %%es:(%%si)\n"
+        :: "g" (segment), "g" (offset)
+        : "ax", "si", "es"
+    );
 }
