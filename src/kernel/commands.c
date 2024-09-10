@@ -110,12 +110,10 @@ void _int(char* token) {
         puts("Usage: int <interrupt> [registers]\r\n"); return;
     }
 
-    interrupt = atoul(token);
+    char* names[6] = {"ax", "bx", "cx", "dx", "si", "di"};
+    unsigned int registers[6] = {0};
 
-    unsigned int ax = 0;
-    unsigned int bx = 0;
-    unsigned int cx = 0;
-    unsigned int dx = 0;
+    interrupt = atoul(token);
 
     while ((token = strtok(NULL, " ")) != NULL) {
         unsigned int value = atoul(token + 3);
@@ -124,22 +122,22 @@ void _int(char* token) {
             case 'a':
                 switch (token[1]) {
                     case 'x':
-                        ax = value; break;
+                        registers[0] = value; break;
                     case 'h':
-                        ax += value << 8; break;
+                        registers[0] += value << 8; break;
                     case 'l':
-                        ax += value & 0xff; break;
+                        registers[0] += value & 0xff; break;
                 }
 
                 break;
             case 'b':
                 switch (token[1]) {
                     case 'x':
-                        bx = value; break;
+                        registers[1] = value; break;
                     case 'h':
-                        bx += value << 8; break;
+                        registers[1] += value << 8; break;
                     case 'l':
-                        bx += value & 0xff; break;
+                        registers[1] += value & 0xff; break;
                     /*
                     case 'p':
                         bp = value; break;
@@ -150,40 +148,38 @@ void _int(char* token) {
             case 'c':
                 switch (token[1]) {
                     case 'x':
-                        cx = value; break;
+                        registers[2] = value; break;
                     case 'h':
-                        cx += value << 8; break;
+                        registers[2] += value << 8; break;
                     case 'l':
-                        cx += value & 0xff; break;
+                        registers[2] += value & 0xff; break;
                 }
 
                 break;
             case 'd':
                 switch (token[1]) {
                     case 'x':
-                        dx = value; break;
+                        registers[3] = value; break;
                     case 'h':
-                        dx += value << 8; break;
+                        registers[3] += value << 8; break;
                     case 'l':
-                        dx += value & 0xff; break;
-                    /*
+                        registers[3] += value & 0xff; break;
                     case 'i':
-                        di = value; break;
-                    */
+                        registers[5] = value; break;
                 }
 
                 break;
-            /*
             case 's':
                 switch (token[1]) {
+                    /*
                     case 'p':
                         sp = value; break;
+                    */
                     case 'i':
-                        si = value; break;
+                        registers[4] = value; break;
                 }
 
                 break;
-            */
         }
     }
 
@@ -194,11 +190,42 @@ void _int(char* token) {
         "movw %2, %%bx\n"
         "movw %3, %%cx\n"
         "movw %4, %%dx\n"
+        "movw %5, %%si\n"
+        "movw %6, %%di\n"
         "interrupt:\n\t"
         "int $0x00\n"
-        :: "g" (interrupt), "g" (ax), "g" (bx), "g" (cx), "g" (dx)
-        : "cs", "ax", "bx", "cx", "dx"
+        :: "g" (interrupt), \
+           "g" (registers[0]), "g" (registers[1]), "g" (registers[2]), \
+           "g" (registers[3]), "g" (registers[4]), "g" (registers[5])
+        : "cs", "ax", "bx", "cx", "dx", "si", "di"
     );
+
+    __asm__ (
+        "movw %%ax, %0\n"
+        "movw %%bx, %1\n"
+        "movw %%cx, %2\n"
+        "movw %%dx, %3\n"
+        "movw %%si, %4\n"
+        "movw %%di, %5\n"
+        : "=g" (registers[0]), "=g" (registers[1]), "=g" (registers[2]), \
+          "=g" (registers[3]), "=g" (registers[4]), "=g" (registers[5])
+        :: "ax", "bx", "cx", "dx", "si", "di"
+    );
+
+    char* buffer;
+
+    for (unsigned char i = 0; i < 6; i++) {
+        puts(names[i]);
+        putchar('=');
+
+        ultoa(registers[i], buffer);
+        puts(buffer);
+
+        putchar(' ');
+    }
+
+    putchar('\r');
+    putchar('\n');
 }
 
 void read(char* token) {
