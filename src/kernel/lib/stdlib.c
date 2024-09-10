@@ -77,9 +77,8 @@ char* __ultoa_dec(unsigned long n, char* buf) {
     }
 
     buf[i] = '\0';
-    strrev(buf);
 
-    return buf;
+    return strrev(buf);
 }
 
 char* __ultoa_hex(unsigned long n, char* buf) {
@@ -106,11 +105,30 @@ char* __ultoa_hex(unsigned long n, char* buf) {
     return strrev(buf);
 }
 
+char* __ultoa_bin(unsigned long n, char* buf) {
+    unsigned char i = 0;
+
+    if (n == 0) {
+        buf[i++] = '0';
+    } else {
+        for (unsigned long x = n; x > 0; x /= 2) {
+            buf[i++] = x % 2 + 48;
+        }
+    }
+
+    buf[i] = '\0';
+
+    return strrev(buf);
+}
+
 char* ultoa(unsigned long n, char* buf, char base) {
-    if (base == 10) {
-        return __ultoa_dec(n, buf);
-    } else if (base == 16) {
-        return __ultoa_hex(n, buf);
+    switch (base) {
+        case 2:
+            return __ultoa_bin(n, buf);
+        case 10:
+            return __ultoa_dec(n, buf);
+        case 16:
+            return __ultoa_hex(n, buf);
     }
 
     return NULL;
