@@ -65,8 +65,8 @@ unsigned long atoul(const char* nptr) {
     return __atoul_dec(nptr);
 }
 
-char* ultoa(unsigned long n, char* buf) {
-    int i = 0;
+char* __ultoa_dec(unsigned long n, char* buf) {
+    unsigned char i = 0;
 
     if (n == 0) {
         buf[i++] = '0';
@@ -80,4 +80,38 @@ char* ultoa(unsigned long n, char* buf) {
     strrev(buf);
 
     return buf;
+}
+
+char* __ultoa_hex(unsigned long n, char* buf) {
+    unsigned char i = 0;
+
+    if (n == 0) {
+        buf[i++] = '0';
+    } else {
+        for (unsigned long x = n; x > 0; x /= 16) {
+            unsigned long r = x % 16;
+
+            if (r < 10) {
+                buf[i++] = r + 48;
+            } else {
+                buf[i++] = r + 55;
+            }
+        }
+    }
+
+    buf[i++] = 'x';
+    buf[i++] = '0';
+    buf[i] = '\0';
+
+    return strrev(buf);
+}
+
+char* ultoa(unsigned long n, char* buf, char base) {
+    if (base == 10) {
+        return __ultoa_dec(n, buf);
+    } else if (base == 16) {
+        return __ultoa_hex(n, buf);
+    }
+
+    return NULL;
 }

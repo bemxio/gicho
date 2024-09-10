@@ -54,7 +54,7 @@ void peek(char* token) {
     unsigned int offset = address & 0xffff;
 
     unsigned char value;
-    char* buffer;
+    char buffer[4];
 
     __asm__ (
         "movw %1, %%ax\n"
@@ -66,7 +66,7 @@ void peek(char* token) {
         : "ax", "si", "es"
     );
 
-    ultoa(value, buffer);
+    ultoa(value, buffer, 10);
     puts(buffer);
 
     putchar('\r');
@@ -212,13 +212,13 @@ void _int(char* token) {
         :: "ax", "bx", "cx", "dx", "si", "di"
     );
 
-    char* buffer;
+    char buffer[7];
 
     for (unsigned char i = 0; i < 6; i++) {
         puts(names[i]);
         putchar('=');
 
-        ultoa(registers[i], buffer);
+        ultoa(registers[i], buffer, 16);
         puts(buffer);
 
         putchar(' ');
@@ -298,7 +298,7 @@ void read(char* token) {
     if (status != 0) {
         puts("Disk read failed with error code ");
 
-        ultoa(status, token);
+        ultoa(status, token, 16);
         puts(token);
         
         putchar('.');
@@ -377,7 +377,7 @@ void write(char* token) {
     if (status != 0) {
         puts("Disk write failed with error code ");
 
-        ultoa(status, token);
+        ultoa(status, token, 16);
         puts(token);
 
         putchar('.');

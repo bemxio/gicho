@@ -4,6 +4,6 @@
 #include "string.h"
 
 unsigned long atoul(const char* nptr);
-char* ultoa(unsigned long n, char* buf);
+char* ultoa(unsigned long n, char* buf, char base);
 
 #endif
