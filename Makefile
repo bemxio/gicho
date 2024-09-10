@@ -9,14 +9,13 @@ LDFLAGS = -Ttext 0x0500 --oformat binary
 LDLIBS = $(shell $(CC) -print-libgcc-file-name)
 
 AS = nasm
-GDB = gdb
 QEMU = qemu-system-i386
 
 # directories and files
 SRC_DIR = src
 BUILD_DIR = build
 
-EXECUTABLE = gicho.bin
+EXECUTABLE = gicho.img
 
 SOURCES = $(shell find $(SRC_DIR) -name *.c)
 OBJECTS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SOURCES))
@@ -30,21 +29,18 @@ all: $(BUILD_DIR)/$(EXECUTABLE)
 run: $(BUILD_DIR)/$(EXECUTABLE)
 	$(QEMU) -drive format=raw,file=$<
 
-debug: $(BUILD_DIR)/$(EXECUTABLE)
-	$(QEMU) -drive format=raw,file=$< -s -S &
-	$(GDB) -ex "target remote localhost:1234"
-
 clean:
 	rm -rf build
 
 $(BUILD_DIR)/$(EXECUTABLE): $(BUILD_DIR)/bootloader.bin $(BUILD_DIR)/kernel.bin
 	cat $^ > $@
 
-$(BUILD_DIR)/bootloader.bin: $(SRC_DIR)/bootloader/main.asm $(wildcard $(SRC_DIR)/bootloader/*.asm) | $(BUILD_DIR)
-	$(AS) -f bin $< -o $@
+$(BUILD_DIR)/bootloader.bin: $(SRC_DIR)/bootloader/main.asm $(wildcard $(SRC_DIR)/bootloader/*.asm) $(BUILD_DIR)/kernel.bin | $(BUILD_DIR)
+	$(AS) -f bin -DKERNEL_SIZE=$$(($(shell stat -c %s $(BUILD_DIR)/kernel.bin) / 512)) $< -o $@
 
 $(BUILD_DIR)/kernel.bin: $(BUILD_DIR)/kernel/entry_point.o $(OBJECTS)
 	$(LD) $(LDFLAGS) $^ -o $@ $(LDLIBS)
+	truncate -s %512 $@
 
 # rules
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)

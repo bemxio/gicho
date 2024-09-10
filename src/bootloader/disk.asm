@@ -2,7 +2,7 @@ disk_read:
     pusha ; save registers
 
     mov ah, 0x02 ; 'Read Sectors Into Memory' function
-    mov al, 0x0c ; sector amount
+    mov al, KERNEL_SIZE ; sector amount
 
     mov cl, 0x02 ; sector (0x02 is the first 'available' sector)
     mov ch, 0x00 ; cylinder (0x0 - 0x3FF)
