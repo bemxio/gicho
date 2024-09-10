@@ -30,7 +30,7 @@ run: $(BUILD_DIR)/$(EXECUTABLE)
 	$(QEMU) -drive format=raw,file=$<
 
 clean:
-	rm -rf build
+	$(RM) -r build
 
 $(BUILD_DIR)/$(EXECUTABLE): $(BUILD_DIR)/bootloader.bin $(BUILD_DIR)/kernel.bin
 	cat $^ > $@

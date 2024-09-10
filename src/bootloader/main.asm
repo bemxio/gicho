@@ -15,7 +15,7 @@ jmp bx ; jump to the kernel
 
 ; strings
 START_MESSAGE db "Starting Gicho...", 0x0d, 0x0a, 0x00
-DISK_ERROR_MESSAGE db "Disk read failed with error code 0x", 0x00
+DISK_ERROR_MESSAGE db "Error: Disk read failed with error code 0x", 0x00
 LINE_BREAK db 0x0d, 0x0a, 0x00
 
 ; pad the rest of the sector with zeros
