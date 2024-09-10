@@ -1,5 +1,24 @@
 #include "string.h"
 
+void* memset(void* s, int c, size_t n) {
+    for (unsigned char* p = (unsigned char*)s; n != 0; n--) {
+        *p++ = c;
+    }
+
+    return s;
+}
+
+void* memcpy(void* restrict s1, const void* restrict s2, size_t n) {
+    char* destination = s1;
+    const char* source = s2;
+
+    while (n--) {
+        *destination++ = *source++;
+    }
+
+    return s1;
+}
+
 size_t strlen(const char* s) {
     size_t i = 0;
 
