@@ -214,7 +214,7 @@ void read(char* token) {
     drive = atoul(token);
 
     if ((token = strtok(NULL, " ")) == NULL) {
-        puts("Usage: read <drive number> <sector amount> [offset] [memory address]]\r\n"); return;
+        puts("Usage: read <drive number> <sector amount> [offset] [memory address]\r\n"); return;
     }
 
     amount = atoul(token);
@@ -383,6 +383,4 @@ void run(char* token) {
         :: "g" (segment), "g" (offset)
         : "ax", "bx"
     );
-
-    clear();
 }

@@ -17,8 +17,8 @@ BUILD_DIR = build
 
 EXECUTABLE = gicho.img
 
-SOURCES = $(shell find $(SRC_DIR) -name *.c)
-OBJECTS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SOURCES))
+OBJECTS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(shell find $(SRC_DIR) -name *.c))
+SAMPLES = $(patsubst $(SRC_DIR)/%.asm, $(BUILD_DIR)/%.bin, $(wildcard $(SRC_DIR)/samples/*.asm))
 
 # phony
 .PHONY: all run clean
@@ -32,7 +32,7 @@ run: $(BUILD_DIR)/$(EXECUTABLE)
 clean:
 	$(RM) -r build
 
-$(BUILD_DIR)/$(EXECUTABLE): $(BUILD_DIR)/bootloader.bin $(BUILD_DIR)/kernel.bin
+$(BUILD_DIR)/$(EXECUTABLE): $(BUILD_DIR)/bootloader.bin $(BUILD_DIR)/kernel.bin $(SAMPLES)
 	cat $^ > $@
 
 $(BUILD_DIR)/bootloader.bin: $(SRC_DIR)/bootloader/main.asm $(wildcard $(SRC_DIR)/bootloader/*.asm) $(BUILD_DIR)/kernel.bin | $(BUILD_DIR)
@@ -49,5 +49,8 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.asm | $(BUILD_DIR)
 	$(AS) -f elf $^ -o $@
 
+$(BUILD_DIR)/%.bin: $(SRC_DIR)/%.asm | $(BUILD_DIR)
+	$(AS) -f bin $^ -o $@
+
 $(BUILD_DIR):
-	mkdir -p $@/kernel/lib
+	mkdir -p $@/kernel/lib $@/samples
