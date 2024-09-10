@@ -2,7 +2,7 @@
 
 unsigned long __atoul_dec(const char* nptr) {
     unsigned long n = 0;
-    long m = 1;
+    long long m = 1;
 
     for (int i = strlen(nptr) - 1; i >= 0; i--) {
         if (nptr[i] < '0' || nptr[i] > '9') {
@@ -18,7 +18,7 @@ unsigned long __atoul_dec(const char* nptr) {
 
 unsigned long __atoul_hex(const char* nptr) {
     unsigned long n = 0;
-    long m = 1;
+    long long m = 1;
 
     for (int i = strlen(nptr) - 1; i >= 0; i--) {
         if (nptr[i] >= '0' && nptr[i] <= '9') {
@@ -37,10 +37,28 @@ unsigned long __atoul_hex(const char* nptr) {
     return n;
 }
 
+unsigned long __atoul_bin(const char* nptr) {
+    unsigned long n = 0;
+    int m = 1;
+
+    for (int i = strlen(nptr) - 1; i >= 0; i--) {
+        if (nptr[i] != '0' || nptr[i] != '1') {
+            continue;
+        }
+
+        n += (nptr[i] - 48) * m;
+        m *= 2;
+    }
+
+    return n;
+}
+
 unsigned long atoul(const char* nptr) {
     if (nptr[0] == '0') {
         if (nptr[1] == 'x' || nptr[1] == 'X') {
             return __atoul_hex(nptr + 2);
+        } else if (nptr[1] == 'b' || nptr[1] == 'B') {
+            return __atoul_bin(nptr + 2);
         }
     }
 
