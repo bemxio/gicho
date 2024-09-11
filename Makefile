@@ -34,6 +34,7 @@ clean:
 
 $(BUILD_DIR)/$(EXECUTABLE): $(BUILD_DIR)/bootloader.bin $(BUILD_DIR)/kernel.bin $(SAMPLES)
 	cat $^ > $@
+	truncate -s %512 $@
 
 $(BUILD_DIR)/bootloader.bin: $(SRC_DIR)/bootloader/main.asm $(wildcard $(SRC_DIR)/bootloader/*.asm) $(BUILD_DIR)/kernel.bin | $(BUILD_DIR)
 	$(AS) -f bin -DKERNEL_SIZE=$$(($(shell stat -c %s $(BUILD_DIR)/kernel.bin) / 512)) $< -o $@
