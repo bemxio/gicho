@@ -8,20 +8,17 @@ disk_read:
     mov ch, 0x00 ; cylinder (0x0 - 0x3FF)
     mov dh, 0x00 ; head number (0x0 - 0xF)
 
-    int 0x13 ; call the BIOS interrupt
-    jc disk_error ; if the carry flag is set, there was an error
+    int 0x13 ; BIOS interrupt
+    jc disk_error ; handle error if carry flag is set
 
     popa ; restore registers
     ret ; return from function
 
 disk_error:
-    mov si, DISK_ERROR_MESSAGE ; load the address of the error message
-    mov cl, ah ; load the error code into the `cl` register
+    mov si, DISK_ERROR_MESSAGE ; set string index to message address
+    mov cl, ah ; set error code
 
-    call print ; print the error message
-    call print_hex ; print the error code in hex
+    call print ; print error message
+    call print_hex ; print error code in hex
 
-    mov si, LINE_BREAK ; load the address of the line break character
-    call print ; print the newline character
-
-    hlt ; halt the system
+    hlt ; halt CPU

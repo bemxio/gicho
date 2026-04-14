@@ -1,18 +1,18 @@
 print:
     pusha ; save registers
 
-    mov ah, 0x0e ; 'Teletype Output' function
-    xor bh, bh ; set page number to 0
+    mov ah, 0x0e ; "Teletype Output" function
+    xor bh, bh ; reset page number
 
     print_loop:
-        mov al, [si] ; move the character from the source index to the register
+        mov al, [si] ; move character from source index to register
 
-        test al, al ; check if the character is null
-        jz print_end ; if so, print is done
+        test al, al ; check if character is null
+        jz print_end ; jump to end if true
 
-        int 0x10 ; call the BIOS interrupt
+        int 0x10 ; BIOS interrupt
 
-        inc si ; move to the next character
+        inc si ; increment source index
         jmp print_loop ; repeat
 
     print_end:
@@ -22,29 +22,29 @@ print:
 print_hex:
     pusha ; save registers
 
-    mov ch, cl ; copy the value to another register
+    mov ch, cl ; copy original value to register
     shr ch, 0x04 ; shift right by 4 bits
-    call print_hex_digit ; print the high nibble
+    call print_hex_digit ; print high nibble
 
-    mov ch, cl ; copy the value to another register
-    and ch, 0x0f ; mask the low nibble
-    call print_hex_digit ; print the low nibble
+    mov ch, cl ; copy original value to register
+    and ch, 0x0f ; mask low 4 bits
+    call print_hex_digit ; print low nibble
 
     popa ; restore registers
     ret ; return from function
 
     print_hex_digit:
-        add ch, '0' ; convert the value to ASCII
+        add ch, "0" ; convert value to ASCII
 
-        cmp ch, '9' ; check if the value is less than or equal to 9
-        jle print_hex_char ; if so, print the character
+        cmp ch, "9" ; check if value is less than or equal to 9
+        jle print_hex_char ; print character if true
 
-        add ch, 0x07 ; adjust the value to a correct ASCII character
+        add ch, 0x07 ; adjust value to correct ASCII character
 
     print_hex_char:
-        mov al, ch ; move the character to the register
-        mov ah, 0x0e ; 'Teletype Output' function
+        mov al, ch ; move character to register
+        mov ah, 0x0e ; "Teletype Output" function
 
-        int 0x10 ; call the BIOS interrupt
+        int 0x10 ; BIOS interrupt
 
         ret ; return from function
