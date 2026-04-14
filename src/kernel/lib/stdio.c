@@ -44,7 +44,19 @@ char __putchar(char c, char attr, ...) {
     } else if (c == '\r') {
         x = 0;
     } else if (c == '\n') {
-        y++;
+        if (y <= 23) {
+            y++;
+        } else {
+            __asm__ (
+                "mov $0x06, %%ah\n"
+                "xor %%bh, %%bh\n"
+                "mov $0x01, %%al\n"
+                "mov $0x00, %%cx\n"
+                "mov $0x1950, %%dx\n"
+                "int $0x10\n"
+                ::: "ah", "bh", "al", "cx", "dx"
+            );
+        }
     } else if (c == '\b') {
         x--;
     }

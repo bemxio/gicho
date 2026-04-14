@@ -21,4 +21,5 @@ disk_error:
     call print ; print error message
     call print_hex ; print error code in hex
 
+    cli ; disable interrupts
     hlt ; halt CPU

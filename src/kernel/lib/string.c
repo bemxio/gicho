@@ -9,11 +9,11 @@ void* memset(void* s, int c, size_t n) {
 }
 
 void* memcpy(void* restrict s1, const void* restrict s2, size_t n) {
-    char* destination = s1;
-    const char* source = s2;
+    char* dest = s1;
+    const char* src = s2;
 
     while (n--) {
-        *destination++ = *source++;
+        *dest++ = *src++;
     }
 
     return s1;

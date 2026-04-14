@@ -1,11 +1,10 @@
 [bits 16] ; 16-bit mode
 [extern main] ; main kernel function
 
-global _start ; set the entry point
+global _start ; set entry point
 
 _start:
-    call main ; call the main function
+    call main ; call main function
 
-    ; shut down the system in case the kernel returns
     cli ; disable interrupts
-    hlt ; halt the CPU
+    hlt ; halt CPU
