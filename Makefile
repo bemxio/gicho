@@ -6,7 +6,7 @@ CCFLAGS = -I$(SRC_DIR)/kernel/include -Wall -ffreestanding
 
 LD = $(PREFIX)-ld
 LDFLAGS = -Ttext 0x0500 --oformat binary
-#LDLIBS = $(shell $(CC) -print-libgcc-file-name)
+LDLIBS = $(shell $(CC) -print-libgcc-file-name)
 
 AS = nasm
 #ASFLAGS =
