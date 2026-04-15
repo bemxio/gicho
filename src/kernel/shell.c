@@ -1,6 +1,6 @@
-#include "commands.h"
+#include "shell.h"
 
-void cmd_print(char* token) {
+void shell_cmd_print(char* token) {
     while ((token = strtok(NULL, " ")) != NULL) {
         puts(token);
         putchar(' ');
@@ -10,7 +10,7 @@ void cmd_print(char* token) {
     putchar('\n');
 }
 
-void cmd_peek(char* token) {
+void shell_cmd_peek(char* token) {
     uint32_t address;
 
     if ((token = strtok(NULL, " ")) == NULL) {
@@ -42,7 +42,7 @@ void cmd_peek(char* token) {
     putchar('\n');
 }
 
-void cmd_poke(char* token) {
+void shell_cmd_poke(char* token) {
     uint32_t address;
     uint8_t value;
 
@@ -72,7 +72,7 @@ void cmd_poke(char* token) {
     );
 }
 
-void cmd_int(char* token) {
+void shell_cmd_int(char* token) {
     uint8_t interrupt;
 
     if ((token = strtok(NULL, " ")) == NULL) {
@@ -197,7 +197,7 @@ void cmd_int(char* token) {
     putchar('\n');
 }
 
-void cmd_read(char* token) {
+void shell_cmd_read(char* token) {
     uint8_t drive;
     uint8_t amount;
     uint32_t position;
@@ -274,7 +274,7 @@ void cmd_read(char* token) {
     }
 }
 
-void cmd_write(char* token) {
+void shell_cmd_write(char* token) {
     uint8_t drive;
     uint8_t amount;
     uint32_t address;
@@ -351,13 +351,29 @@ void cmd_write(char* token) {
     }
 }
 
-command_t commands[] = {
-    {"print", cmd_print},
+shell_cmd_t shell_cmds[] = {
+    {"print", shell_cmd_print},
     {"clear", clear},
-    {"peek", cmd_peek},
-    {"poke", cmd_poke},
-    {"int", cmd_int},
-    {"read", cmd_read},
-    {"write", cmd_write},
+    {"peek", shell_cmd_peek},
+    {"poke", shell_cmd_poke},
+    {"int", shell_cmd_int},
+    {"read", shell_cmd_read},
+    {"write", shell_cmd_write},
     {NULL, NULL}
 };
+
+void shell_execute_cmd(char* input) {
+    char* token = strtok(input, " ");
+
+    if (token == NULL || token[0] == '\0') {
+        return;
+    }
+
+    for (shell_cmd_t* cmd = shell_cmds; cmd->name != NULL; cmd++) {
+        if (strcmp(token, cmd->name) == 0) {
+            cmd->func(token); return;
+        }
+    }
+
+    puts("Command not found.\r\n");
+}
