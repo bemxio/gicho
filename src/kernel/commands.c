@@ -11,18 +11,18 @@ void cmd_print(char* token) {
 }
 
 void cmd_peek(char* token) {
-    unsigned long address;
+    uint32_t address;
 
     if ((token = strtok(NULL, " ")) == NULL) {
         puts("peek: Address not specified\r\n"); return;
     }
 
-    address = atoul(token);
+    address = atoi(token);
 
-    unsigned int segment = address >> 16;
-    unsigned int offset = address & 0xffff;
+    uint32_t segment = address >> 16;
+    uint32_t offset = address & 0xffff;
 
-    unsigned char value;
+    uint8_t value;
     char buffer[4];
 
     __asm__ (
@@ -30,12 +30,12 @@ void cmd_peek(char* token) {
         "movw %2, %%si\n"
         "movw %%ax, %%es\n"
         "movb %%es:(%%si), %0\n"
-        : "=r" (value) 
+        : "=r" (value)
         : "g" (segment), "g" (offset)
         : "ax", "si", "es"
     );
 
-    ultoa(value, buffer, 10);
+    itoa(value, buffer, 10);
     puts(buffer);
 
     putchar('\r');
@@ -43,23 +43,23 @@ void cmd_peek(char* token) {
 }
 
 void cmd_poke(char* token) {
-    unsigned long address;
-    unsigned char value;
+    uint32_t address;
+    uint8_t value;
 
     if ((token = strtok(NULL, " ")) == NULL) {
         puts("poke: Address not specified\r\n"); return;
     }
 
-    address = atoul(token);
+    address = atoi(token);
 
     if ((token = strtok(NULL, " ")) == NULL) {
         puts("poke: Value not specified\r\n"); return;
     }
 
-    value = atoul(token);
+    value = atoi(token);
 
-    unsigned int segment = address >> 16;
-    unsigned int offset = address & 0xffff;
+    uint32_t segment = address >> 16;
+    uint32_t offset = address & 0xffff;
 
     __asm__ (
         "movw %0, %%ax\n"
@@ -73,19 +73,19 @@ void cmd_poke(char* token) {
 }
 
 void cmd_int(char* token) {
-    unsigned char interrupt;
+    uint8_t interrupt;
 
     if ((token = strtok(NULL, " ")) == NULL) {
         puts("int: Interrupt not specified\r\n"); return;
     }
 
     char* names[6] = {"ax", "bx", "cx", "dx", "si", "di"};
-    unsigned int registers[6] = {0};
+    uint32_t registers[6] = {0};
 
-    interrupt = atoul(token);
+    interrupt = atoi(token);
 
     while ((token = strtok(NULL, " ")) != NULL) {
-        unsigned int value = atoul(token + 3);
+        uint32_t value = atoi(token + 3);
 
         switch (token[0]) {
             case 'a':
@@ -183,11 +183,11 @@ void cmd_int(char* token) {
 
     char buffer[7];
 
-    for (unsigned char i = 0; i < 6; i++) {
+    for (uint8_t i = 0; i < 6; i++) {
         puts(names[i]);
         putchar('=');
 
-        ultoa(registers[i], buffer, 16);
+        itoa(registers[i], buffer, 16);
         puts(buffer);
 
         putchar(' ');
@@ -198,31 +198,31 @@ void cmd_int(char* token) {
 }
 
 void cmd_read(char* token) {
-    unsigned char drive;
-    unsigned char amount;
-    unsigned long position;
-    unsigned long address;
+    uint8_t drive;
+    uint8_t amount;
+    uint32_t position;
+    uint32_t address;
 
     if ((token = strtok(NULL, " ")) == NULL) {
         puts("read: Drive number not specified\r\n"); return;
     }
 
-    drive = atoul(token);
+    drive = atoi(token);
 
     if ((token = strtok(NULL, " ")) == NULL) {
         puts("read: Sector amount not specified\r\n"); return;
     }
 
-    amount = atoul(token);
+    amount = atoi(token);
 
     if ((token = strtok(NULL, " ")) != NULL) {
-        position = atoul(token);
+        position = atoi(token);
     } else {
         position = 0;
     }
 
     if ((token = strtok(NULL, " ")) != NULL) {
-        address = atoul(token);
+        address = atoi(token);
     } else {
         address = 0x7e00;
     }
@@ -231,15 +231,15 @@ void cmd_read(char* token) {
         puts("read: Offset out of range\r\n"); return;
     }
 
-    unsigned int segment = address >> 16;
-    unsigned int offset = address & 0xffff;
+    uint32_t segment = address >> 16;
+    uint32_t offset = address & 0xffff;
 
-    unsigned int cylinders = position / (16 * 63);
-    unsigned char heads = (position / 63) % 16;
-    unsigned char sectors = (position % 63) + 1;
+    uint32_t cylinders = position / (16 * 63);
+    uint8_t heads = (position / 63) % 16;
+    uint8_t sectors = (position % 63) + 1;
 
-    unsigned char ch = cylinders & 0xff;
-    unsigned char cl = ((cylinders >> 2) & 0xc0) | sectors;
+    uint8_t ch = cylinders & 0xff;
+    uint8_t cl = ((cylinders >> 2) & 0xc0) | sectors;
 
     __asm__ (
         "movb $0x02, %%ah\n"
@@ -256,7 +256,7 @@ void cmd_read(char* token) {
         : "ah", "al", "ch", "cl", "dh", "dl", "bx", "es"
     );
 
-    unsigned char status;
+    uint8_t status;
 
     __asm__ (
         "movb %%ah, %0\n"
@@ -267,9 +267,9 @@ void cmd_read(char* token) {
     if (status != 0) {
         puts("read: Failed with error code ");
 
-        ultoa(status, token, 16);
+        itoa(status, token, 16);
         puts(token);
-        
+
         putchar('.');
         putchar('\r');
         putchar('\n');
@@ -277,31 +277,31 @@ void cmd_read(char* token) {
 }
 
 void cmd_write(char* token) {
-    unsigned char drive;
-    unsigned char amount;
-    unsigned long address;
-    unsigned long position;
+    uint8_t drive;
+    uint8_t amount;
+    uint32_t address;
+    uint32_t position;
 
     if ((token = strtok(NULL, " ")) == NULL) {
         puts("write: Drive number not specified\r\n"); return;
     }
 
-    drive = atoul(token);
+    drive = atoi(token);
 
     if ((token = strtok(NULL, " ")) == NULL) {
         puts("write: Sector amount not specified\r\n"); return;
     }
 
-    amount = atoul(token);
+    amount = atoi(token);
 
     if ((token = strtok(NULL, " ")) != NULL) {
-        address = atoul(token);
+        address = atoi(token);
     } else {
         address = 0x7e00;
     }
 
     if ((token = strtok(NULL, " ")) != NULL) {
-        position = atoul(token);
+        position = atoi(token);
     } else {
         position = 0;
     }
@@ -310,15 +310,15 @@ void cmd_write(char* token) {
         puts("write: Offset out of range\r\n"); return;
     }
 
-    unsigned int segment = address >> 16;
-    unsigned int offset = address & 0xffff;
+    uint32_t segment = address >> 16;
+    uint32_t offset = address & 0xffff;
 
-    unsigned int cylinders = position / (16 * 63);
-    unsigned char heads = (position / 63) % 16;
-    unsigned char sectors = (position % 63) + 1;
+    uint32_t cylinders = position / (16 * 63);
+    uint8_t heads = (position / 63) % 16;
+    uint8_t sectors = (position % 63) + 1;
 
-    unsigned char ch = cylinders & 0xff;
-    unsigned char cl = ((cylinders >> 2) & 0xc0) | sectors;
+    uint8_t ch = cylinders & 0xff;
+    uint8_t cl = ((cylinders >> 2) & 0xc0) | sectors;
 
     __asm__ (
         "movb $0x03, %%ah\n"
@@ -335,7 +335,7 @@ void cmd_write(char* token) {
         : "ah", "al", "ch", "cl", "dh", "dl", "bx", "es"
     );
 
-    unsigned char status;
+    uint8_t status;
 
     __asm__ (
         "movb %%ah, %0\n"
@@ -346,7 +346,7 @@ void cmd_write(char* token) {
     if (status != 0) {
         puts("write: Failed with error code ");
 
-        ultoa(status, token, 16);
+        itoa(status, token, 16);
         puts(token);
 
         putchar('.');
