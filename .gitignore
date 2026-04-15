@@ -1,20 +1,11 @@
-# JetBrains (PyCharm, IntelliJ IDEA, etc.)
-.idea/
-
-# Visual Studio Code
-.vscode/
-
 # Object files
 *.o
 
-# Binary files
+# Executables
 *.bin
-*.raw
-*.elf
 
 # Image files
 *.img
-*.iso
 
 # Build directory
 build/

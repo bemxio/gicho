@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "name": "Gicho",
+            "includePath": [
+                "${default}",
+                "${workspaceFolder}/src/kernel/include"
+            ]
+        }
+    ],
+    "version": 4
+}
