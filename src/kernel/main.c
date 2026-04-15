@@ -1,7 +1,5 @@
-#include "io.h"
 #include "commands.h"
-
-#include <stdint.h>
+#include "io.h"
 
 void kmain() {
     char buffer[256];
@@ -18,6 +16,8 @@ void kmain() {
         for (size_t i = 0; commands[i].name != NULL; i++) {
             if (strcmp(token, commands[i].name) == 0) {
                 commands[i].function(token); break;
+            } else if (commands[i + 1].name == NULL) {
+                puts("Command not found.\r\n");
             }
         }
     }

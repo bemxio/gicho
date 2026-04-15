@@ -7,7 +7,7 @@ char getchar() {
         "movb $0x00, %%ah\n"
         "int $0x16\n"
         "movb %%al, %0\n"
-        : "=r" (c)
+        : "=g" (c)
         :: "ah", "al"
     );
 
@@ -51,7 +51,7 @@ void putchar(char c) {
         "movb $0x0e, %%ah\n"
         "movb %0, %%al\n"
         "int $0x10\n"
-        :: "r" (c)
+        :: "g" (c)
         : "ah", "al"
     );
 }

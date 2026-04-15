@@ -1,7 +1,7 @@
 disk_read:
     pusha ; save registers
 
-    mov ah, 0x02 ; 'Read Sectors Into Memory' function
+    mov ah, 0x02 ; "Read Sectors Into Memory" function
     mov al, KERNEL_SIZE ; sector amount
 
     mov cl, 0x02 ; sector (0x02 is the first 'available' sector)
