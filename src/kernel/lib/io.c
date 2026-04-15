@@ -61,3 +61,12 @@ void puts(const char* s) {
         putchar(*s++);
     }
 }
+
+void clear() {
+    __asm__ (
+        "movb $0x00, %%ah\n"
+        "movb 0x449, %%al\n"
+        "int $0x10\n"
+        ::: "ah", "al"
+    );
+}

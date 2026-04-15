@@ -9,4 +9,6 @@ char* gets(char* buf);
 void putchar(char c);
 void puts(const char* s);
 
+void clear();
+
 #endif

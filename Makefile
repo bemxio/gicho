@@ -2,7 +2,7 @@
 PREFIX = ia16-elf
 
 CC = $(PREFIX)-gcc
-CCFLAGS = -Wall -I$(SRC_DIR)/kernel/include -ffreestanding
+CCFLAGS = -I$(SRC_DIR)/kernel/include -Wall -ffreestanding
 
 LD = $(PREFIX)-ld
 LDFLAGS = -Ttext 0x0500 --oformat binary
@@ -18,7 +18,7 @@ BUILD_DIR = build
 
 EXECUTABLE = gicho.img
 
-SOURCES = $(wildcard $(SRC_DIR)/kernel/*.c)
+SOURCES = $(wildcard $(SRC_DIR)/kernel/*.c) $(wildcard $(SRC_DIR)/kernel/**/*.c)
 OBJECTS = $(BUILD_DIR)/kernel/entry_point.o $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(SOURCES))
 
 # phony
@@ -51,4 +51,4 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.asm | $(BUILD_DIR)
 	$(AS) -f elf $(ASFLAGS) $^ -o $@
 
 $(BUILD_DIR):
-	mkdir -p $@/kernel
+	mkdir -p $@/kernel/lib
