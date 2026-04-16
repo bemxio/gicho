@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "shell/shell.h"
 
 void kmain() {
     char buffer[256];

@@ -2,7 +2,7 @@
 PREFIX = ia16-elf
 
 CC = $(PREFIX)-gcc
-CCFLAGS = -I$(SRC_DIR)/kernel/include -Wall -ffreestanding
+CCFLAGS = -Wall -ffreestanding
 
 LD = $(PREFIX)-ld
 LDFLAGS = -Ttext 0x0500 --oformat binary
@@ -51,4 +51,4 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.asm | $(BUILD_DIR)
 	$(AS) -f elf $(ASFLAGS) $^ -o $@
 
 $(BUILD_DIR):
-	mkdir -p $@/kernel/lib
+	mkdir -p $@/kernel/lib $@/kernel/shell
