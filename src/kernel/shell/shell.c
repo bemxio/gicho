@@ -1,15 +1,19 @@
 #include "shell.h"
 
-void shell_execute_cmd(char* input) {
-    char* token = strtok(input, " ");
+#include "../lib/io.h"
+#include "../lib/string.h"
+#include "commands.h"
 
-    if (token == NULL || token[0] == '\0') {
+void shell_execute_cmd(shell_t* shell, char* input) {
+    shell->token = strtok(input, " ");
+
+    if (shell->token == NULL || shell->token[0] == '\0') {
         return;
     }
 
     for (shell_cmd_t* cmd = shell_cmds; cmd->name != NULL; cmd++) {
-        if (strcmp(token, cmd->name) == 0) {
-            cmd->func(token); return;
+        if (strcmp(shell->token, cmd->name) == 0) {
+            cmd->func(shell); return;
         }
     }
 

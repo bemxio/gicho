@@ -1,14 +1,11 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
-#include <stdint.h>
-
-#include "../lib/io.h"
-#include "../lib/string.h"
+#include "shell.h"
 
 typedef struct {
     char* name;
-    void (*func)(char* token);
+    void (*func)(shell_t* shell);
 } shell_cmd_t;
 
 shell_cmd_t shell_cmds[];

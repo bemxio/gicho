@@ -1,8 +1,13 @@
 #include "commands.h"
 
-void shell_cmd_print(char* token) {
-    while ((token = strtok(NULL, " ")) != NULL) {
-        puts(token);
+#include "../lib/io.h"
+#include "../lib/string.h"
+
+#include <stdint.h>
+
+void shell_cmd_print(shell_t* shell) {
+    while ((shell->token = strtok(NULL, " ")) != NULL) {
+        puts(shell->token);
         putchar(' ');
     }
 
@@ -10,14 +15,14 @@ void shell_cmd_print(char* token) {
     putchar('\n');
 }
 
-void shell_cmd_peek(char* token) {
+void shell_cmd_peek(shell_t* shell) {
     uint32_t address;
 
-    if ((token = strtok(NULL, " ")) == NULL) {
+    if ((shell->token = strtok(NULL, " ")) == NULL) {
         puts("peek: Address not specified.\r\n"); return;
     }
 
-    address = atoi(token);
+    address = atoi(shell->token);
 
     uint16_t segment = address >> 16;
     uint16_t offset = address & 0xffff;
@@ -42,21 +47,21 @@ void shell_cmd_peek(char* token) {
     putchar('\n');
 }
 
-void shell_cmd_poke(char* token) {
+void shell_cmd_poke(shell_t* shell) {
     uint32_t address;
     uint8_t value;
 
-    if ((token = strtok(NULL, " ")) == NULL) {
+    if ((shell->token = strtok(NULL, " ")) == NULL) {
         puts("poke: Address not specified.\r\n"); return;
     }
 
-    address = atoi(token);
+    address = atoi(shell->token);
 
-    if ((token = strtok(NULL, " ")) == NULL) {
+    if ((shell->token = strtok(NULL, " ")) == NULL) {
         puts("poke: Value not specified.\r\n"); return;
     }
 
-    value = atoi(token);
+    value = atoi(shell->token);
 
     uint16_t segment = address >> 16;
     uint16_t offset = address & 0xffff;
@@ -72,24 +77,24 @@ void shell_cmd_poke(char* token) {
     );
 }
 
-void shell_cmd_int(char* token) {
+void shell_cmd_int(shell_t* shell) {
     uint8_t interrupt;
 
-    if ((token = strtok(NULL, " ")) == NULL) {
+    if ((shell->token = strtok(NULL, " ")) == NULL) {
         puts("int: Interrupt not specified.\r\n"); return;
     }
 
     char* names[6] = {"ax", "bx", "cx", "dx", "si", "di"};
     uint16_t registers[6] = {0};
 
-    interrupt = atoi(token);
+    interrupt = atoi(shell->token);
 
-    while ((token = strtok(NULL, " ")) != NULL) {
-        uint16_t value = atoi(token + 3);
+    while ((shell->token = strtok(NULL, " ")) != NULL) {
+        uint16_t value = atoi(shell->token + 3);
 
-        switch (token[0]) {
+        switch (shell->token[0]) {
             case 'a':
-                switch (token[1]) {
+                switch (shell->token[1]) {
                     case 'x':
                         registers[0] = value; break;
                     case 'h':
@@ -100,7 +105,7 @@ void shell_cmd_int(char* token) {
 
                 break;
             case 'b':
-                switch (token[1]) {
+                switch (shell->token[1]) {
                     case 'x':
                         registers[1] = value; break;
                     case 'h':
@@ -115,7 +120,7 @@ void shell_cmd_int(char* token) {
 
                 break;
             case 'c':
-                switch (token[1]) {
+                switch (shell->token[1]) {
                     case 'x':
                         registers[2] = value; break;
                     case 'h':
@@ -126,7 +131,7 @@ void shell_cmd_int(char* token) {
 
                 break;
             case 'd':
-                switch (token[1]) {
+                switch (shell->token[1]) {
                     case 'x':
                         registers[3] = value; break;
                     case 'h':
@@ -139,7 +144,7 @@ void shell_cmd_int(char* token) {
 
                 break;
             case 's':
-                switch (token[1]) {
+                switch (shell->token[1]) {
                     /*
                     case 'p':
                         sp = value; break;
@@ -197,32 +202,32 @@ void shell_cmd_int(char* token) {
     putchar('\n');
 }
 
-void shell_cmd_read(char* token) {
+void shell_cmd_read(shell_t* shell) {
     uint8_t drive;
     uint8_t amount;
     uint32_t position;
     uint32_t address;
 
-    if ((token = strtok(NULL, " ")) == NULL) {
+    if ((shell->token = strtok(NULL, " ")) == NULL) {
         puts("read: Drive number not specified.\r\n"); return;
     }
 
-    drive = atoi(token);
+    drive = atoi(shell->token);
 
-    if ((token = strtok(NULL, " ")) == NULL) {
+    if ((shell->token = strtok(NULL, " ")) == NULL) {
         puts("read: Sector amount not specified.\r\n"); return;
     }
 
-    amount = atoi(token);
+    amount = atoi(shell->token);
 
-    if ((token = strtok(NULL, " ")) != NULL) {
-        position = atoi(token);
+    if ((shell->token = strtok(NULL, " ")) != NULL) {
+        position = atoi(shell->token);
     } else {
         position = 0;
     }
 
-    if ((token = strtok(NULL, " ")) != NULL) {
-        address = atoi(token);
+    if ((shell->token = strtok(NULL, " ")) != NULL) {
+        address = atoi(shell->token);
     } else {
         address = 0x7e00;
     }
@@ -267,39 +272,39 @@ void shell_cmd_read(char* token) {
     if (status != 0) {
         puts("read: Failed with error code ");
 
-        itoa(status, token, 16);
-        puts(token);
+        itoa(status, shell->token, 16);
+        puts(shell->token);
 
         puts(".\r\n");
     }
 }
 
-void shell_cmd_write(char* token) {
+void shell_cmd_write(shell_t* shell) {
     uint8_t drive;
     uint8_t amount;
     uint32_t address;
     uint32_t position;
 
-    if ((token = strtok(NULL, " ")) == NULL) {
+    if ((shell->token = strtok(NULL, " ")) == NULL) {
         puts("write: Drive number not specified.\r\n"); return;
     }
 
-    drive = atoi(token);
+    drive = atoi(shell->token);
 
-    if ((token = strtok(NULL, " ")) == NULL) {
+    if ((shell->token = strtok(NULL, " ")) == NULL) {
         puts("write: Sector amount not specified.\r\n"); return;
     }
 
-    amount = atoi(token);
+    amount = atoi(shell->token);
 
-    if ((token = strtok(NULL, " ")) != NULL) {
-        address = atoi(token);
+    if ((shell->token = strtok(NULL, " ")) != NULL) {
+        address = atoi(shell->token);
     } else {
         address = 0x7e00;
     }
 
-    if ((token = strtok(NULL, " ")) != NULL) {
-        position = atoi(token);
+    if ((shell->token = strtok(NULL, " ")) != NULL) {
+        position = atoi(shell->token);
     } else {
         position = 0;
     }
@@ -344,8 +349,8 @@ void shell_cmd_write(char* token) {
     if (status != 0) {
         puts("write: Failed with error code ");
 
-        itoa(status, token, 16);
-        puts(token);
+        itoa(status, shell->token, 16);
+        puts(shell->token);
 
         puts(".\r\n");
     }
