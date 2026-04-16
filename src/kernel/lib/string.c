@@ -2,15 +2,6 @@
 
 #include <stdbool.h>
 
-size_t strlen(const char* s) {
-    size_t i = 0;
-
-    while (s[i] != '\0')
-        i++;
-
-    return i;
-}
-
 int strcmp(const char* s1, const char* s2) {
     while (*s1 && (*s1 == *s2)) {
         s1++;
@@ -18,6 +9,27 @@ int strcmp(const char* s1, const char* s2) {
     }
 
     return *(const unsigned char*)s1 - *(const unsigned char*)s2;
+}
+
+void* strcpy(char* restrict s1, const char* restrict s2) {
+    char* dest = s1;
+    const char* src = s2;
+
+    while (*src)
+        *dest++ = *src++;
+
+    *dest = '\0';
+
+    return s1;
+}
+
+size_t strlen(const char* s) {
+    size_t i = 0;
+
+    while (s[i] != '\0')
+        i++;
+
+    return i;
 }
 
 char* strrev(char* s) {

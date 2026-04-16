@@ -16,3 +16,12 @@ void* memcpy(void* restrict s1, const void* restrict s2, size_t n) {
 
     return s1;
 }
+
+void* malloc(size_t size) {
+    static void* address = 0x8000; // TODO: calculate this based on kernel size
+
+    void* ptr = (void*)address;
+    address += size;
+
+    return ptr;
+}
