@@ -1,5 +1,7 @@
 #include "io.h"
 
+#include <stddef.h>
+
 char getchar() {
     char c;
 
