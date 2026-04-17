@@ -15,6 +15,24 @@ void shell_cmd_print(shell_t* shell) {
     putchar('\n');
 }
 
+void shell_cmd_set(shell_t* shell) {
+    if ((shell->token = strtok(NULL, " ")) == NULL) {
+        puts("set: Variable name not specified.\r\n"); return;
+    }
+
+    char* name = shell->token;
+
+    if ((shell->token = strtok(NULL, " ")) == NULL) {
+        puts("set: Variable value not specified.\r\n"); return;
+    }
+
+    char* value = shell->token;
+
+    if (shell_var_set(shell, name, SHELL_TYPE_STRING, value) == NULL) {
+        puts("set: Variable limit reached.\r\n"); return;
+    }
+}
+
 void shell_cmd_peek(shell_t* shell) {
     uint32_t address;
 
@@ -359,6 +377,7 @@ void shell_cmd_write(shell_t* shell) {
 shell_cmd_t shell_cmds[] = {
     {"print", shell_cmd_print},
     {"clear", clear},
+    {"set", shell_cmd_set},
     {"peek", shell_cmd_peek},
     {"poke", shell_cmd_poke},
     {"int", shell_cmd_int},
