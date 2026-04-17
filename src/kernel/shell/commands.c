@@ -7,7 +7,18 @@
 
 void shell_cmd_print(shell_t* shell) {
     while ((shell->token = strtok(NULL, " ")) != NULL) {
-        puts(shell->token);
+        if (shell->token[0] == '$') {
+            shell_var_t* variable = shell_var_get(shell, shell->token + 1);
+
+            if (variable == NULL) {
+                puts("print: Variable not found.\r\n"); return;
+            }
+
+            puts((char*)variable->value);
+        } else {
+            puts(shell->token);
+        }
+
         putchar(' ');
     }
 
