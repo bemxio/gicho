@@ -14,7 +14,16 @@ void shell_cmd_print(shell_t* shell) {
                 puts("print: Variable not found.\r\n"); return;
             }
 
-            puts((char*)variable->value);
+            if (variable->type == SHELL_TYPE_INTEGER) {
+                char buffer[12];
+
+                itoa(*(int*)variable->value, buffer, 10);
+                puts(buffer);
+            } else if (variable->type == SHELL_TYPE_BOOLEAN) {
+                puts(*(bool*)variable->value ? "true" : "false");
+            } else if (variable->type == SHELL_TYPE_STRING) {
+                puts((char*)variable->value);
+            }
         } else {
             puts(shell->token);
         }
