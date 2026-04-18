@@ -5,7 +5,7 @@
 
 typedef enum {
     SHELL_TYPE_INTEGER,
-    SHELL_TYPE_FLOAT,
+    //SHELL_TYPE_FLOAT,
     SHELL_TYPE_STRING,
     SHELL_TYPE_BOOLEAN
 } shell_type_t;

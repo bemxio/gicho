@@ -45,9 +45,34 @@ shell_var_t* shell_var_set(shell_t* shell, char* name, shell_type_t type, void* 
     }
 
     variable->type = type;
-    variable->value = malloc(strlen(value) + 1);
 
-    strcpy(variable->value, value); // TODO: handle other types
+    switch (type) {
+        case SHELL_TYPE_INTEGER:
+            variable->value = malloc(sizeof(int));
+            *(int*)variable->value = *(int*)value;
+
+            break;
+
+        /*
+        case SHELL_TYPE_FLOAT:
+            variable->value = malloc(sizeof(float));
+            *(float*)variable->value = *(float*)value;
+
+            break;
+        */
+
+        case SHELL_TYPE_BOOLEAN:
+            variable->value = malloc(sizeof(bool));
+            *(bool*)variable->value = *(bool*)value;
+
+            break;
+
+        case SHELL_TYPE_STRING:
+            variable->value = malloc(strlen((char*)value) + 1);
+            strcpy(variable->value, (char*)value);
+
+            break;
+    }
 
     return variable;
 }

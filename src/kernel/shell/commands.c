@@ -39,8 +39,28 @@ void shell_cmd_set(shell_t* shell) {
 
     char* value = shell->token;
 
-    if (shell_var_set(shell, name, SHELL_TYPE_STRING, value) == NULL) {
-        puts("set: Variable limit reached.\r\n"); return;
+    if (isnumeric(value)) {
+        int number = atoi(value);
+
+        if (shell_var_set(shell, name, SHELL_TYPE_INTEGER, &number) == NULL) {
+            puts("set: Variable limit reached.\r\n"); return;
+        }
+
+        return;
+    } else if (strcmp(value, "true") == 0 || strcmp(value, "false") == 0) {
+        bool boolean = strcmp(value, "true") == 0;
+
+        if (shell_var_set(shell, name, SHELL_TYPE_BOOLEAN, &boolean) == NULL) {
+            puts("set: Variable limit reached.\r\n"); return;
+        }
+
+        return;
+    } else {
+        if (shell_var_set(shell, name, SHELL_TYPE_STRING, value) == NULL) {
+            puts("set: Variable limit reached.\r\n"); return;
+        }
+    
+        return;
     }
 }
 
