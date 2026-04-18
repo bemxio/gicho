@@ -44,6 +44,53 @@ void shell_cmd_set(shell_t* shell) {
     }
 }
 
+void shell_cmd_eval(shell_t* shell) {
+    int32_t result = 0;
+
+    char operator = '+';
+    bool flag = true;
+
+    while ((shell->token = strtok(NULL, " ")) != NULL) {
+        if (flag) {
+            if (!isnumeric(shell->token)) {
+                puts("eval: Invalid operand.\r\n"); return;
+            }
+
+            int32_t operand = atoi(shell->token);
+
+            switch (operator) {
+                case '+': result += operand; break;
+                case '-': result -= operand; break;
+                case '*': result *= operand; break;
+                case '/':
+                    if (operand == 0) {
+                        puts("eval: Division by zero.\r\n"); return;
+                    }
+
+                    result /= operand; break;
+
+                default:
+                    puts("eval: Invalid operator.\r\n"); return;
+            }
+
+            flag = false;
+        } else {
+            if (strlen(shell->token) != 1) {
+                puts("eval: Invalid operator.\r\n"); return;
+            }
+
+            operator = shell->token[0];
+            flag = true;
+        }
+    }
+
+    char buffer[12];
+
+    itoa(result, buffer, 10);
+    puts(buffer);
+    puts("\r\n");
+}
+
 void shell_cmd_peek(shell_t* shell) {
     uint32_t address;
 
@@ -389,6 +436,7 @@ shell_cmd_t shell_cmds[] = {
     {"print", shell_cmd_print},
     {"clear", clear},
     {"set", shell_cmd_set},
+    {"eval", shell_cmd_eval},
     {"peek", shell_cmd_peek},
     {"poke", shell_cmd_poke},
     {"int", shell_cmd_int},
