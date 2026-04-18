@@ -39,11 +39,14 @@ shell_var_t* shell_var_set(shell_t* shell, char* name, shell_type_t type, void* 
     if (variable == NULL)
         return NULL;
 
-    variable->name = malloc(strlen(name) + 1);
+    if (variable->name == NULL) {
+        variable->name = malloc(strlen(name) + 1);
+        strcpy(variable->name, name);
+    }
+
     variable->type = type;
     variable->value = malloc(strlen(value) + 1);
 
-    strcpy(variable->name, name);
     strcpy(variable->value, value); // TODO: handle other types
 
     return variable;
