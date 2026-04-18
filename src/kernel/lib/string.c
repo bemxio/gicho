@@ -199,3 +199,55 @@ char* itoa(int n, char* buf, char base) {
 
     return NULL;
 }
+
+/*
+bool isdigit(char c) {
+    return c >= '0' && c <= '9';
+}
+*/
+
+bool _isnumeric_dec(const char* s) {
+    while (*s) {
+        if (*s < '0' || *s > '9')
+            return false;
+
+        s++;
+    }
+
+    return true;
+}
+
+bool _isnumeric_hex(const char* s) {
+    while (*s) {
+        if (!(*s >= '0' && *s <= '9') &&
+            !(*s >= 'A' && *s <= 'F') &&
+            !(*s >= 'a' && *s <= 'f'))
+            return false;
+
+        s++;
+    }
+
+    return true;
+}
+
+bool _isnumeric_bin(const char* s) {
+    while (*s) {
+        if (*s != '0' && *s != '1')
+            return false;
+
+        s++;
+    }
+
+    return true;
+}
+
+bool isnumeric(const char* s) {
+    if (s[0] == '0') {
+        if (s[1] == 'x' || s[1] == 'X')
+            return _isnumeric_hex(s + 2);
+        else if (s[1] == 'b' || s[1] == 'B')
+            return _isnumeric_bin(s + 2);
+    }
+
+    return _isnumeric_dec(s);
+}

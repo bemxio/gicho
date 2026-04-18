@@ -1,6 +1,7 @@
 #ifndef STRING_H
 #define STRING_H
 
+#include <stdbool.h>
 #include <stddef.h>
 
 int strcmp(const char* s1, const char* s2);
@@ -11,5 +12,8 @@ char* strtok(char* s, const char* delim);
 
 int atoi(const char* str);
 char* itoa(int n, char* buf, char base);
+
+//bool isdigit(char c);
+bool isnumeric(const char* s);
 
 #endif
