@@ -81,11 +81,25 @@ void shell_cmd_eval(shell_t* shell) {
 
     while ((shell->token = strtok(NULL, " ")) != NULL) {
         if (flag) {
-            if (!isnumeric(shell->token)) {
+            int32_t operand;
+
+            if (shell->token[0] == '$') {
+                shell_var_t* variable = shell_var_get(shell, shell->token + 1);
+
+                if (variable == NULL) {
+                    puts("eval: Variable not found.\r\n"); return;
+                }
+
+                if (variable->type != SHELL_TYPE_INTEGER) {
+                    puts("eval: Variable is not an integer.\r\n"); return;
+                }
+
+                operand = *(int*)variable->value;
+            } else if (isnumeric(shell->token)) {
+                operand = atoi(shell->token);
+            } else {
                 puts("eval: Invalid operand.\r\n"); return;
             }
-
-            int32_t operand = atoi(shell->token);
 
             switch (operator) {
                 case '+': result += operand; break;
