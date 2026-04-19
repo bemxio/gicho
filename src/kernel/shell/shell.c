@@ -1,7 +1,7 @@
 #include "shell.h"
 
 #include "../lib/io.h"
-#include "../lib/mem.h"
+#include "../lib/memory.h"
 #include "../lib/string.h"
 #include "commands.h"
 
