@@ -1,7 +1,5 @@
 #include "string.h"
 
-#include <stdbool.h>
-
 int strcmp(const char* s1, const char* s2) {
     while (*s1 && (*s1 == *s2)) {
         s1++;
@@ -76,11 +74,11 @@ char* strtok(char* s, const char* delim) {
     return s;
 }
 
-int _atoi_dec(const char* nptr) {
-    int n = 0;
-    unsigned long long m = 1;
+uint32_t _atoi_dec(const char* nptr) {
+    uint32_t n = 0;
+    uint64_t m = 1;
 
-    for (int i = strlen(nptr) - 1; i >= 0; i--) {
+    for (int8_t i = strlen(nptr) - 1; i >= 0; i--) {
         if (nptr[i] < '0' || nptr[i] > '9')
             continue;
 
@@ -91,11 +89,11 @@ int _atoi_dec(const char* nptr) {
     return n;
 }
 
-int _atoi_hex(const char* nptr) {
-    int n = 0;
-    unsigned long long m = 1;
+uint32_t _atoi_hex(const char* nptr) {
+    uint32_t n = 0;
+    uint64_t m = 1;
 
-    for (int i = strlen(nptr) - 1; i >= 0; i--) {
+    for (int8_t i = strlen(nptr) - 1; i >= 0; i--) {
         if (nptr[i] >= '0' && nptr[i] <= '9')
             n += (nptr[i] - 48) * m;
         else if (nptr[i] >= 'A' && nptr[i] <= 'F')
@@ -111,12 +109,12 @@ int _atoi_hex(const char* nptr) {
     return n;
 }
 
-int _atoi_bin(const char* nptr) {
-    int n = 0;
-    unsigned long m = 1;
+uint32_t _atoi_bin(const char* nptr) {
+    uint32_t n = 0;
+    uint32_t m = 1;
 
-    for (int i = strlen(nptr) - 1; i >= 0; i--) {
-        if (nptr[i] != '0' || nptr[i] != '1')
+    for (int8_t i = strlen(nptr) - 1; i >= 0; i--) {
+        if (nptr[i] != '0' && nptr[i] != '1')
             continue;
 
         n += (nptr[i] - 48) * m;
@@ -126,7 +124,7 @@ int _atoi_bin(const char* nptr) {
     return n;
 }
 
-int atoi(const char* nptr) {
+uint32_t atoi(const char* nptr) {
     if (nptr[0] == '0') {
         if (nptr[1] == 'x' || nptr[1] == 'X')
             return _atoi_hex(nptr + 2);
@@ -137,13 +135,13 @@ int atoi(const char* nptr) {
     return _atoi_dec(nptr);
 }
 
-char* _itoa_dec(int n, char* buf) {
+char* _itoa_dec(uint32_t n, char* buf) {
     size_t i = 0;
 
     if (n == 0) {
         buf[i++] = '0';
     } else {
-        for (int x = n; x > 0; x /= 10)
+        for (uint32_t x = n; x > 0; x /= 10)
             buf[i++] = x % 10 + 48;
     }
 
@@ -152,14 +150,14 @@ char* _itoa_dec(int n, char* buf) {
     return strrev(buf);
 }
 
-char* _itoa_hex(int n, char* buf) {
+char* _itoa_hex(uint32_t n, char* buf) {
     size_t i = 0;
 
     if (n == 0) {
         buf[i++] = '0';
     } else {
-        for (int x = n; x > 0; x /= 16) {
-            int r = x % 16;
+        for (uint32_t x = n; x > 0; x /= 16) {
+            uint8_t r = x % 16;
 
             if (r < 10)
                 buf[i++] = r + 48;
@@ -175,13 +173,13 @@ char* _itoa_hex(int n, char* buf) {
     return strrev(buf);
 }
 
-char* _itoa_bin(int n, char* buf) {
+char* _itoa_bin(uint32_t n, char* buf) {
     size_t i = 0;
 
     if (n == 0) {
         buf[i++] = '0';
     } else {
-        for (int x = n; x > 0; x /= 2)
+        for (uint32_t x = n; x > 0; x /= 2)
             buf[i++] = x % 2 + 48;
     }
 
@@ -190,7 +188,7 @@ char* _itoa_bin(int n, char* buf) {
     return strrev(buf);
 }
 
-char* itoa(int n, char* buf, char base) {
+char* itoa(uint32_t n, char* buf, char base) {
     switch (base) {
         case 2: return _itoa_bin(n, buf);
         case 10: return _itoa_dec(n, buf);
