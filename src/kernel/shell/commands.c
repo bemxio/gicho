@@ -141,10 +141,26 @@ void shell_cmd_peek(shell_t* shell) {
         puts("peek: Address not specified.\r\n"); return;
     }
 
-    address = atoi(shell->token);
+    if (shell->token[0] == '$') {
+        shell_var_t* variable = shell_var_get(shell, shell->token + 1);
 
-    uint16_t segment = address >> 16;
-    uint16_t offset = address & 0xffff;
+        if (variable == NULL) {
+            puts("peek: Variable not found.\r\n"); return;
+        }
+
+        if (variable->type != SHELL_TYPE_INTEGER) {
+            puts("peek: Variable is not an integer.\r\n"); return;
+        }
+
+        address = *(int*)variable->value;
+    } else if (isnumeric(shell->token)) {
+        address = atoi(shell->token);
+    } else {
+        puts("peek: Invalid address.\r\n"); return;
+    }
+
+    uint16_t segment = address >> 4;
+    uint16_t offset = address & 0xf;
 
     uint8_t value;
     char buffer[4];
@@ -174,16 +190,48 @@ void shell_cmd_poke(shell_t* shell) {
         puts("poke: Address not specified.\r\n"); return;
     }
 
-    address = atoi(shell->token);
+    if (shell->token[0] == '$') {
+        shell_var_t* variable = shell_var_get(shell, shell->token + 1);
+
+        if (variable == NULL) {
+            puts("poke: Variable not found.\r\n"); return;
+        }
+
+        if (variable->type != SHELL_TYPE_INTEGER) {
+            puts("poke: Variable is not an integer.\r\n"); return;
+        }
+
+        address = *(int*)variable->value;
+    } else if (isnumeric(shell->token)) {
+        address = atoi(shell->token);
+    } else {
+        puts("poke: Invalid address.\r\n"); return;
+    }
 
     if ((shell->token = strtok(NULL, " ")) == NULL) {
         puts("poke: Value not specified.\r\n"); return;
     }
 
-    value = atoi(shell->token);
+    if (shell->token[0] == '$') {
+        shell_var_t* variable = shell_var_get(shell, shell->token + 1);
 
-    uint16_t segment = address >> 16;
-    uint16_t offset = address & 0xffff;
+        if (variable == NULL) {
+            puts("poke: Variable not found.\r\n"); return;
+        }
+    
+        if (variable->type != SHELL_TYPE_INTEGER) {
+            puts("poke: Variable is not an integer.\r\n"); return;
+        }
+    
+        value = *(int*)variable->value;
+    } else if (isnumeric(shell->token)) {
+        value = atoi(shell->token);
+    } else {
+        puts("poke: Invalid value.\r\n"); return;
+    }
+
+    uint16_t segment = address >> 4;
+    uint16_t offset = address & 0xf;
 
     __asm__ (
         "movw %0, %%ax\n"
@@ -206,10 +254,44 @@ void shell_cmd_int(shell_t* shell) {
     char* names[6] = {"ax", "bx", "cx", "dx", "si", "di"};
     uint16_t registers[6] = {0};
 
-    interrupt = atoi(shell->token);
+    if (shell->token[0] == '$') {
+        shell_var_t* variable = shell_var_get(shell, shell->token + 1);
+
+        if (variable == NULL) {
+            puts("int: Variable not found.\r\n"); return;
+        }
+
+        if (variable->type != SHELL_TYPE_INTEGER) {
+            puts("int: Variable is not an integer.\r\n"); return;
+        }
+
+        interrupt = *(int*)variable->value;
+    } else if (isnumeric(shell->token)) {
+        interrupt = atoi(shell->token);
+    } else {
+        puts("int: Invalid interrupt value.\r\n"); return;
+    }
 
     while ((shell->token = strtok(NULL, " ")) != NULL) {
-        uint16_t value = atoi(shell->token + 3);
+        uint16_t value;
+
+        if (shell->token[3] == '$') {
+            shell_var_t* variable = shell_var_get(shell, shell->token + 4);
+    
+            if (variable == NULL) {
+                puts("int: Variable not found.\r\n"); return;
+            }
+
+            if (variable->type != SHELL_TYPE_INTEGER) {
+                puts("int: Variable is not an integer.\r\n"); return;
+            }
+    
+            value = *(int*)variable->value;
+        } else if (isnumeric(shell->token + 3)) {
+            value = atoi(shell->token + 3);
+        } else {
+            puts("int: Invalid register value.\r\n"); return;
+        }
 
         switch (shell->token[0]) {
             case 'a':
@@ -331,22 +413,86 @@ void shell_cmd_read(shell_t* shell) {
         puts("read: Drive number not specified.\r\n"); return;
     }
 
-    drive = atoi(shell->token);
+    if (shell->token[0] == '$') {
+        shell_var_t* variable = shell_var_get(shell, shell->token + 1);
+
+        if (variable == NULL) {
+            puts("read: Variable not found.\r\n"); return;
+        }
+
+        if (variable->type != SHELL_TYPE_INTEGER) {
+            puts("read: Variable is not an integer.\r\n"); return;
+        }
+
+        drive = *(int*)variable->value;
+    } else if (isnumeric(shell->token)) {
+        drive = atoi(shell->token);
+    } else {
+        puts("read: Invalid drive number.\r\n"); return;
+    }
 
     if ((shell->token = strtok(NULL, " ")) == NULL) {
         puts("read: Sector amount not specified.\r\n"); return;
     }
 
-    amount = atoi(shell->token);
+    if (shell->token[0] == '$') {
+        shell_var_t* variable = shell_var_get(shell, shell->token + 1);
+
+        if (variable == NULL) {
+            puts("read: Variable not found.\r\n"); return;
+        }
+
+        if (variable->type != SHELL_TYPE_INTEGER) {
+            puts("read: Variable is not an integer.\r\n"); return;
+        }
+
+        amount = *(int*)variable->value;
+    } else if (isnumeric(shell->token)) {
+        amount = atoi(shell->token);
+    } else {
+        puts("read: Invalid sector amount.\r\n"); return;
+    }
 
     if ((shell->token = strtok(NULL, " ")) != NULL) {
-        position = atoi(shell->token);
+        if (shell->token[0] == '$') {
+            shell_var_t* variable = shell_var_get(shell, shell->token + 1);
+
+            if (variable == NULL) {
+                puts("read: Variable not found.\r\n"); return;
+            }
+
+            if (variable->type != SHELL_TYPE_INTEGER) {
+                puts("read: Variable is not an integer.\r\n"); return;
+            }
+
+            position = *(int*)variable->value;
+        } else if (isnumeric(shell->token)) {
+            position = atoi(shell->token);
+        } else {
+            puts("read: Invalid position.\r\n"); return;
+        }
     } else {
         position = 0;
     }
 
     if ((shell->token = strtok(NULL, " ")) != NULL) {
-        address = atoi(shell->token);
+        if (shell->token[0] == '$') {
+            shell_var_t* variable = shell_var_get(shell, shell->token + 1);
+
+            if (variable == NULL) {
+                puts("read: Variable not found.\r\n"); return;
+            }
+
+            if (variable->type != SHELL_TYPE_INTEGER) {
+                puts("read: Variable is not an integer.\r\n"); return;
+            }
+
+            address = *(int*)variable->value;
+        } else if (isnumeric(shell->token)) {
+            address = atoi(shell->token);
+        } else {
+            puts("read: Invalid address.\r\n"); return;
+        }
     } else {
         address = 0x7e00;
     }
@@ -408,22 +554,86 @@ void shell_cmd_write(shell_t* shell) {
         puts("write: Drive number not specified.\r\n"); return;
     }
 
-    drive = atoi(shell->token);
+    if (shell->token[0] == '$') {
+        shell_var_t* variable = shell_var_get(shell, shell->token + 1);
+
+        if (variable == NULL) {
+            puts("write: Variable not found.\r\n"); return;
+        }
+
+        if (variable->type != SHELL_TYPE_INTEGER) {
+            puts("write: Variable is not an integer.\r\n"); return;
+        }
+
+        drive = *(int*)variable->value;
+    } else if (isnumeric(shell->token)) {
+        drive = atoi(shell->token);
+    } else {
+        puts("write: Invalid drive number.\r\n"); return;
+    }
 
     if ((shell->token = strtok(NULL, " ")) == NULL) {
         puts("write: Sector amount not specified.\r\n"); return;
     }
 
-    amount = atoi(shell->token);
+    if (shell->token[0] == '$') {
+        shell_var_t* variable = shell_var_get(shell, shell->token + 1);
+
+        if (variable == NULL) {
+            puts("write: Variable not found.\r\n"); return;
+        }
+
+        if (variable->type != SHELL_TYPE_INTEGER) {
+            puts("write: Variable is not an integer.\r\n"); return;
+        }
+
+        amount = *(int*)variable->value;
+    } else if (isnumeric(shell->token)) {
+        amount = atoi(shell->token);
+    } else {
+        puts("write: Invalid sector amount.\r\n"); return;
+    }
 
     if ((shell->token = strtok(NULL, " ")) != NULL) {
-        address = atoi(shell->token);
+        if (shell->token[0] == '$') {
+            shell_var_t* variable = shell_var_get(shell, shell->token + 1);
+
+            if (variable == NULL) {
+                puts("write: Variable not found.\r\n"); return;
+            }
+
+            if (variable->type != SHELL_TYPE_INTEGER) {
+                puts("write: Variable is not an integer.\r\n"); return;
+            }
+
+            address = *(int*)variable->value;
+        } else if (isnumeric(shell->token)) {
+            address = atoi(shell->token);
+        } else {
+            puts("write: Invalid address.\r\n"); return;
+        }
     } else {
         address = 0x7e00;
     }
 
     if ((shell->token = strtok(NULL, " ")) != NULL) {
-        position = atoi(shell->token);
+        if (shell->token[0] == '$') {
+            shell_var_t* variable = shell_var_get(shell, shell->token + 1);
+
+            if (variable == NULL) {
+                puts("write: Variable not found.\r\n"); return;
+            }
+
+            if (variable->type != SHELL_TYPE_INTEGER) {
+                puts("write: Variable is not an integer.\r\n"); return;
+            }
+
+            position = *(int*)variable->value;
+        } else if (isnumeric(shell->token)) {
+            position = atoi(shell->token);
+        } else {
+            puts("write: Invalid position.\r\n"); return;
+        }
     } else {
         position = 0;
     }
