@@ -68,7 +68,7 @@ void shell_cmd_set(shell_t* shell) {
         if (shell_var_set(shell, name, SHELL_TYPE_STRING, value) == NULL) {
             puts("set: Variable limit reached.\r\n"); return;
         }
-    
+
         return;
     }
 }
@@ -218,11 +218,11 @@ void shell_cmd_poke(shell_t* shell) {
         if (variable == NULL) {
             puts("poke: Variable not found.\r\n"); return;
         }
-    
+
         if (variable->type != SHELL_TYPE_INTEGER) {
             puts("poke: Variable is not an integer.\r\n"); return;
         }
-    
+
         value = *(uint16_t*)variable->value;
     } else if (isnumeric(shell->token)) {
         value = atoi(shell->token);
@@ -277,7 +277,7 @@ void shell_cmd_int(shell_t* shell) {
 
         if (shell->token[3] == '$') {
             shell_var_t* variable = shell_var_get(shell, shell->token + 4);
-    
+
             if (variable == NULL) {
                 puts("int: Variable not found.\r\n"); return;
             }
@@ -285,7 +285,7 @@ void shell_cmd_int(shell_t* shell) {
             if (variable->type != SHELL_TYPE_INTEGER) {
                 puts("int: Variable is not an integer.\r\n"); return;
             }
-    
+
             value = *(uint16_t*)variable->value;
         } else if (isnumeric(shell->token + 3)) {
             value = atoi(shell->token + 3);

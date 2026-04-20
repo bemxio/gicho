@@ -3,10 +3,17 @@
 #include "shell/shell.h"
 
 void kmain() {
-    char buffer[256];
     shell_t shell;
+    char buffer[256];
+
+    uint16_t bytes_free = 0xffff - *((uint16_t*)0xfffe) * 512 - 0x500;
+    itoa(bytes_free, buffer, 10);
 
     clear();
+
+    puts("Gicho v2.0\r\n");
+    puts(buffer);
+    puts(" bytes free.\r\n\n");
 
     for (;;) {
         gets(buffer);
