@@ -17,7 +17,7 @@ void shell_cmd_print(shell_t* shell) {
             if (variable->type == SHELL_TYPE_INTEGER) {
                 char buffer[12];
 
-                itoa(*(int*)variable->value, buffer, 10);
+                itoa(*(uint16_t*)variable->value, buffer, 10);
                 puts(buffer);
             } else if (variable->type == SHELL_TYPE_BOOLEAN) {
                 puts(*(bool*)variable->value ? "true" : "false");
@@ -74,14 +74,14 @@ void shell_cmd_set(shell_t* shell) {
 }
 
 void shell_cmd_eval(shell_t* shell) {
-    int32_t result = 0;
+    uint16_t result = 0;
 
     char operator = '+';
     bool flag = true;
 
     while ((shell->token = strtok(NULL, " ")) != NULL) {
         if (flag) {
-            int32_t operand;
+            uint16_t operand;
 
             if (shell->token[0] == '$') {
                 shell_var_t* variable = shell_var_get(shell, shell->token + 1);
@@ -94,7 +94,7 @@ void shell_cmd_eval(shell_t* shell) {
                     puts("eval: Variable is not an integer.\r\n"); return;
                 }
 
-                operand = *(int*)variable->value;
+                operand = *(uint16_t*)variable->value;
             } else if (isnumeric(shell->token)) {
                 operand = atoi(shell->token);
             } else {
@@ -152,7 +152,7 @@ void shell_cmd_peek(shell_t* shell) {
             puts("peek: Variable is not an integer.\r\n"); return;
         }
 
-        address = *(int*)variable->value;
+        address = *(uint16_t*)variable->value;
     } else if (isnumeric(shell->token)) {
         address = atoi(shell->token);
     } else {
@@ -201,7 +201,7 @@ void shell_cmd_poke(shell_t* shell) {
             puts("poke: Variable is not an integer.\r\n"); return;
         }
 
-        address = *(int*)variable->value;
+        address = *(uint16_t*)variable->value;
     } else if (isnumeric(shell->token)) {
         address = atoi(shell->token);
     } else {
@@ -223,7 +223,7 @@ void shell_cmd_poke(shell_t* shell) {
             puts("poke: Variable is not an integer.\r\n"); return;
         }
     
-        value = *(int*)variable->value;
+        value = *(uint16_t*)variable->value;
     } else if (isnumeric(shell->token)) {
         value = atoi(shell->token);
     } else {
@@ -265,7 +265,7 @@ void shell_cmd_int(shell_t* shell) {
             puts("int: Variable is not an integer.\r\n"); return;
         }
 
-        interrupt = *(int*)variable->value;
+        interrupt = *(uint16_t*)variable->value;
     } else if (isnumeric(shell->token)) {
         interrupt = atoi(shell->token);
     } else {
@@ -286,7 +286,7 @@ void shell_cmd_int(shell_t* shell) {
                 puts("int: Variable is not an integer.\r\n"); return;
             }
     
-            value = *(int*)variable->value;
+            value = *(uint16_t*)variable->value;
         } else if (isnumeric(shell->token + 3)) {
             value = atoi(shell->token + 3);
         } else {
@@ -424,7 +424,7 @@ void shell_cmd_read(shell_t* shell) {
             puts("read: Variable is not an integer.\r\n"); return;
         }
 
-        drive = *(int*)variable->value;
+        drive = *(uint16_t*)variable->value;
     } else if (isnumeric(shell->token)) {
         drive = atoi(shell->token);
     } else {
@@ -446,7 +446,7 @@ void shell_cmd_read(shell_t* shell) {
             puts("read: Variable is not an integer.\r\n"); return;
         }
 
-        amount = *(int*)variable->value;
+        amount = *(uint16_t*)variable->value;
     } else if (isnumeric(shell->token)) {
         amount = atoi(shell->token);
     } else {
@@ -465,7 +465,7 @@ void shell_cmd_read(shell_t* shell) {
                 puts("read: Variable is not an integer.\r\n"); return;
             }
 
-            position = *(int*)variable->value;
+            position = *(uint16_t*)variable->value;
         } else if (isnumeric(shell->token)) {
             position = atoi(shell->token);
         } else {
@@ -487,7 +487,7 @@ void shell_cmd_read(shell_t* shell) {
                 puts("read: Variable is not an integer.\r\n"); return;
             }
 
-            address = *(int*)variable->value;
+            address = *(uint16_t*)variable->value;
         } else if (isnumeric(shell->token)) {
             address = atoi(shell->token);
         } else {
@@ -565,7 +565,7 @@ void shell_cmd_write(shell_t* shell) {
             puts("write: Variable is not an integer.\r\n"); return;
         }
 
-        drive = *(int*)variable->value;
+        drive = *(uint16_t*)variable->value;
     } else if (isnumeric(shell->token)) {
         drive = atoi(shell->token);
     } else {
@@ -587,7 +587,7 @@ void shell_cmd_write(shell_t* shell) {
             puts("write: Variable is not an integer.\r\n"); return;
         }
 
-        amount = *(int*)variable->value;
+        amount = *(uint16_t*)variable->value;
     } else if (isnumeric(shell->token)) {
         amount = atoi(shell->token);
     } else {
@@ -606,7 +606,7 @@ void shell_cmd_write(shell_t* shell) {
                 puts("write: Variable is not an integer.\r\n"); return;
             }
 
-            address = *(int*)variable->value;
+            address = *(uint16_t*)variable->value;
         } else if (isnumeric(shell->token)) {
             address = atoi(shell->token);
         } else {
@@ -628,7 +628,7 @@ void shell_cmd_write(shell_t* shell) {
                 puts("write: Variable is not an integer.\r\n"); return;
             }
 
-            position = *(int*)variable->value;
+            position = *(uint16_t*)variable->value;
         } else if (isnumeric(shell->token)) {
             position = atoi(shell->token);
         } else {

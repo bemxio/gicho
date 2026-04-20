@@ -48,18 +48,10 @@ shell_var_t* shell_var_set(shell_t* shell, char* name, shell_type_t type, void* 
 
     switch (type) {
         case SHELL_TYPE_INTEGER:
-            variable->value = malloc(sizeof(int));
-            *(int*)variable->value = *(int*)value;
+            variable->value = malloc(sizeof(uint16_t));
+            *(uint16_t*)variable->value = *(uint16_t*)value;
 
             break;
-
-        /*
-        case SHELL_TYPE_FLOAT:
-            variable->value = malloc(sizeof(float));
-            *(float*)variable->value = *(float*)value;
-
-            break;
-        */
 
         case SHELL_TYPE_BOOLEAN:
             variable->value = malloc(sizeof(bool));
