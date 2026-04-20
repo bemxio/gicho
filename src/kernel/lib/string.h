@@ -17,4 +17,6 @@ char* itoa(uint32_t n, char* buf, char base);
 //bool isdigit(char c);
 bool isnumeric(const char* s);
 
+char* tolower(char* s);
+
 #endif

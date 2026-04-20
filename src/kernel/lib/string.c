@@ -198,12 +198,6 @@ char* itoa(uint32_t n, char* buf, char base) {
     return NULL;
 }
 
-/*
-bool isdigit(char c) {
-    return c >= '0' && c <= '9';
-}
-*/
-
 bool _isnumeric_dec(const char* s) {
     while (*s) {
         if (*s < '0' || *s > '9')
@@ -248,4 +242,15 @@ bool isnumeric(const char* s) {
     }
 
     return _isnumeric_dec(s);
+}
+
+char* tolower(char* s) {
+    while (*s) {
+        if (*s >= 'A' && *s <= 'Z')
+            *s += 32;
+
+        s++;
+    }
+
+    return s;
 }

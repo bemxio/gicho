@@ -76,6 +76,8 @@ void shell_execute_cmd(shell_t* shell, char* input) {
         return;
     }
 
+    tolower(shell->token);
+
     for (shell_cmd_t* cmd = shell_cmds; cmd->name != NULL; cmd++) {
         if (strcmp(shell->token, cmd->name) == 0) {
             cmd->func(shell); return;

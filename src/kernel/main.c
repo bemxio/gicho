@@ -20,6 +20,7 @@ void kmain() {
     for (;;) {
         puts("\r\nReady.\r\n");
         gets(buffer);
+
         shell_execute_cmd(&shell, buffer);
     }
 }
