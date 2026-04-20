@@ -7,7 +7,8 @@ call print ; print boot message
 mov bx, 0x0500 ; set kernel location
 call disk_read ; read kernel code from disk
 
-mov [0xfffe], KERNEL_SIZE ; store kernel size for later use
+mov [0xfffe], dl ; store drive number
+mov [0xffff], KERNEL_SIZE ; store kernel size in sectors
 
 jmp bx ; jump to kernel code
 
