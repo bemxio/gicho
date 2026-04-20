@@ -9,5 +9,6 @@ typedef struct {
 } shell_cmd_t;
 
 shell_cmd_t shell_cmds[];
+shell_cmd_t* shell_cmd_find(char* name);
 
 #endif

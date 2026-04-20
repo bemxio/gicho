@@ -21,6 +21,6 @@ void kmain() {
         puts("\r\nReady.\r\n");
         gets(buffer);
 
-        shell_execute_cmd(&shell, buffer);
+        shell_cmd_exec(&shell, buffer);
     }
 }

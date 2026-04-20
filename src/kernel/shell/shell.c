@@ -69,20 +69,17 @@ shell_var_t* shell_var_set(shell_t* shell, char* name, shell_type_t type, void* 
     return variable;
 }
 
-void shell_execute_cmd(shell_t* shell, char* input) {
+void shell_cmd_exec(shell_t* shell, char* input) {
     shell->token = strtok(input, " ");
 
     if (shell->token == NULL || shell->token[0] == '\0') {
         return;
     }
 
-    tolower(shell->token);
+    shell_cmd_t* cmd = shell_cmd_find(shell->token);
 
-    for (shell_cmd_t* cmd = shell_cmds; cmd->name != NULL; cmd++) {
-        if (strcmp(shell->token, cmd->name) == 0) {
-            cmd->func(shell); return;
-        }
-    }
-
-    puts("Command not found.\r\n");
+    if (cmd == NULL)
+        puts("Command not found.\r\n");
+    else
+        cmd->func(shell);
 }

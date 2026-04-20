@@ -49,27 +49,34 @@ void shell_cmd_set(shell_t* shell) {
     char* value = shell->token;
 
     if (isnumeric(value)) {
-        int number = atoi(value);
+        uint16_t number = atoi(value);
 
-        if (shell_var_set(shell, name, SHELL_TYPE_INTEGER, &number) == NULL) {
-            puts("set: Variable limit reached.\r\n"); return;
-        }
-
-        return;
+        if (shell_var_set(shell, name, SHELL_TYPE_INTEGER, &number) == NULL)
+            puts("set: Variable limit reached.\r\n");
     } else if (strcmp(value, "true") == 0 || strcmp(value, "false") == 0) {
         bool boolean = strcmp(value, "true") == 0;
 
-        if (shell_var_set(shell, name, SHELL_TYPE_BOOLEAN, &boolean) == NULL) {
-            puts("set: Variable limit reached.\r\n"); return;
-        }
-
-        return;
+        if (shell_var_set(shell, name, SHELL_TYPE_BOOLEAN, &boolean) == NULL)
+            puts("set: Variable limit reached.\r\n");
     } else {
-        if (shell_var_set(shell, name, SHELL_TYPE_STRING, value) == NULL) {
-            puts("set: Variable limit reached.\r\n"); return;
-        }
+        shell_cmd_t* cmd = shell_cmd_find(value);
 
-        return;
+        if (cmd != NULL) {
+            uint16_t output = 0;
+
+            shell->token = value;
+            shell->output = &output;
+
+            cmd->func(shell);
+
+            if (shell_var_set(shell, name, SHELL_TYPE_INTEGER, &output) == NULL)
+                puts("set: Variable limit reached.\r\n");
+
+            shell->output = NULL;
+        } else {
+            if (shell_var_set(shell, name, SHELL_TYPE_STRING, value) == NULL)
+                puts("set: Variable limit reached.\r\n");
+        }
     }
 }
 
@@ -127,11 +134,16 @@ void shell_cmd_eval(shell_t* shell) {
         }
     }
 
-    char buffer[12];
+    if (shell->output != NULL) {
+        *(uint16_t*)shell->output = result;
+    } else {
+        char buffer[12];
 
-    itoa(result, buffer, 10);
-    puts(buffer);
-    puts("\r\n");
+        itoa(result, buffer, 10);
+        puts(buffer);
+
+        puts("\r\n");
+    }
 }
 
 void shell_cmd_peek(shell_t* shell) {
@@ -163,7 +175,6 @@ void shell_cmd_peek(shell_t* shell) {
     uint16_t offset = address & 0xf;
 
     uint8_t value;
-    char buffer[4];
 
     __asm__ (
         "movw %1, %%ax\n"
@@ -175,11 +186,16 @@ void shell_cmd_peek(shell_t* shell) {
         : "ax", "si", "es"
     );
 
-    itoa(value, buffer, 10);
-    puts(buffer);
+    if (shell->output != NULL) {
+        *(uint16_t*)shell->output = value;
+    } else {
+        char buffer[4];
 
-    putchar('\r');
-    putchar('\n');
+        itoa(value, buffer, 10);
+        puts(buffer);
+
+        puts("\r\n");
+    }
 }
 
 void shell_cmd_poke(shell_t* shell) {
@@ -375,32 +391,33 @@ void shell_cmd_int(shell_t* shell) {
         : "cs", "ax", "bx", "cx", "dx", "si", "di"
     );
 
-    __asm__ (
-        "movw %%ax, %0\n"
-        "movw %%bx, %1\n"
-        "movw %%cx, %2\n"
-        "movw %%dx, %3\n"
-        "movw %%si, %4\n"
-        "movw %%di, %5\n"
-        : "=g" (registers[0]), "=g" (registers[1]), "=g" (registers[2]), \
-          "=g" (registers[3]), "=g" (registers[4]), "=g" (registers[5])
-        :: "ax", "bx", "cx", "dx", "si", "di"
-    );
+    if (shell->output == NULL) {
+        __asm__ (
+            "movw %%ax, %0\n"
+            "movw %%bx, %1\n"
+            "movw %%cx, %2\n"
+            "movw %%dx, %3\n"
+            "movw %%si, %4\n"
+            "movw %%di, %5\n"
+            : "=g" (registers[0]), "=g" (registers[1]), "=g" (registers[2]), \
+            "=g" (registers[3]), "=g" (registers[4]), "=g" (registers[5])
+            :: "ax", "bx", "cx", "dx", "si", "di"
+        );
 
-    char buffer[7];
+        char buffer[7];
 
-    for (uint8_t i = 0; i < 6; i++) {
-        puts(names[i]);
-        putchar('=');
+        for (uint8_t i = 0; i < 6; i++) {
+            puts(names[i]);
+            putchar('=');
 
-        itoa(registers[i], buffer, 16);
-        puts(buffer);
+            itoa(registers[i], buffer, 16);
+            puts(buffer);
 
-        putchar(' ');
+            putchar(' ');
+        }
+
+        puts("\r\n");
     }
-
-    putchar('\r');
-    putchar('\n');
 }
 
 void shell_cmd_read(shell_t* shell) {
@@ -697,3 +714,14 @@ shell_cmd_t shell_cmds[] = {
     {"write", shell_cmd_write},
     {NULL, NULL}
 };
+
+shell_cmd_t* shell_cmd_find(char* name) {
+    tolower(name);
+
+    for (shell_cmd_t* cmd = shell_cmds; cmd->name != NULL; cmd++) {
+        if (strcmp(name, cmd->name) == 0)
+            return cmd;
+    }
+
+    return NULL;
+}
