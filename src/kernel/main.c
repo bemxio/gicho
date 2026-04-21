@@ -1,8 +1,7 @@
 #include "lib/io.h"
+#include "lib/memory.h"
 #include "lib/string.h"
 #include "shell/shell.h"
-
-#define KERNEL_SIZE *((uint16_t*)0xffff) // kernel size in sectors
 
 void kmain() {
     shell_t shell;
