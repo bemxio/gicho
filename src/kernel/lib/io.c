@@ -59,9 +59,8 @@ void putchar(char c) {
 }
 
 void puts(const char* s) {
-    while (*s) {
+    while (*s)
         putchar(*s++);
-    }
 }
 
 void clear() {

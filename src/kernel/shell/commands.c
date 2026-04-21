@@ -80,6 +80,20 @@ void shell_cmd_set(shell_t* shell) {
     }
 }
 
+void shell_cmd_unset(shell_t* shell) {
+    if ((shell->token = strtok(NULL, " ")) != NULL) {
+        shell_var_unset(shell, shell->token);
+    }
+
+    for (size_t i = 0; i < 32; i++) {
+        if (shell->variables[i].name == NULL)
+            continue;
+
+        shell->variables[i].name = NULL;
+        shell->variables[i].value = NULL;
+    }
+}
+
 void shell_cmd_eval(shell_t* shell) {
     uint16_t result = 0;
 
@@ -706,6 +720,7 @@ shell_cmd_t shell_cmds[] = {
     {"print", shell_cmd_print},
     {"clear", clear},
     {"set", shell_cmd_set},
+    {"unset", shell_cmd_unset},
     {"eval", shell_cmd_eval},
     {"peek", shell_cmd_peek},
     {"poke", shell_cmd_poke},

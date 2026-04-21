@@ -69,6 +69,16 @@ shell_var_t* shell_var_set(shell_t* shell, char* name, shell_type_t type, void* 
     return variable;
 }
 
+void shell_var_unset(shell_t* shell, char* name) {
+    shell_var_t* variable = shell_var_get(shell, name);
+
+    if (variable == NULL)
+        return;
+
+    variable->name = NULL;
+    variable->value = NULL;
+}
+
 void shell_cmd_exec(shell_t* shell, char* input) {
     shell->token = strtok(input, " ");
 
