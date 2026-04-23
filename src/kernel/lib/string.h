@@ -11,12 +11,6 @@ size_t strlen(const char* s);
 char* strrev(char* s);
 char* strtok(char* s, const char* delim);
 
-uint32_t atoi(const char* str);
-char* itoa(uint32_t n, char* buf, char base);
-
-//bool isdigit(char c);
-bool isnumeric(const char* s);
-
 char* tolower(char* s);
 
 #endif

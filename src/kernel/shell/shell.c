@@ -7,6 +7,7 @@
 
 #include <stddef.h>
 
+// variable functions
 shell_var_t* shell_var_new(shell_t* shell) {
     for (size_t i = 0; i < 32; i++) {
         if (shell->variables[i].name == NULL)
@@ -79,17 +80,76 @@ void shell_var_unset(shell_t* shell, char* name) {
     variable->value = NULL;
 }
 
-void shell_cmd_exec(shell_t* shell, char* input) {
-    shell->token = strtok(input, " ");
+// script functions
+shell_line_t* shell_line_new(shell_t* shell) {
+    for (size_t i = 0; i < 64; i++) {
+        if (shell->script[i].index == 0 && shell->script[i].buffer == NULL)
+            return &shell->script[i];
+    }
 
-    if (shell->token == NULL || shell->token[0] == '\0') {
+    return NULL;
+}
+
+shell_line_t* shell_line_get(shell_t* shell, uint16_t index) {
+    for (size_t i = 0; i < 64; i++) {
+        if (shell->script[i].index == 0 || shell->script[i].index != index)
+            continue;
+
+        return &shell->script[i];
+    }
+
+    return NULL;
+}
+
+shell_line_t* shell_line_set(shell_t* shell, uint16_t index, char* buffer) {
+    shell_line_t* line = shell_line_get(shell, index);
+
+    if (line == NULL)
+        line = shell_line_new(shell);
+
+    if (line == NULL)
+        return NULL;
+
+    line->index = index;
+    line->buffer = malloc(strlen(buffer) + 1);
+    
+    strcpy(line->buffer, buffer);
+
+    return line;
+}
+
+void shell_line_unset(shell_t* shell, uint16_t index) {
+    if (index == 0) {
+        for (size_t i = 0; i < 64; i++) {
+            shell->script[i].index = 0;
+            shell->script[i].buffer = NULL;
+        }
+
         return;
     }
 
-    shell_cmd_t* cmd = shell_cmd_find(shell->token);
+    shell_line_t* line = shell_line_get(shell, index);
 
-    if (cmd == NULL)
-        puts("Command not found.\r\n");
-    else
-        cmd->func(shell);
+    if (line == NULL)
+        return;
+
+    line->index = 0;
+    line->buffer = NULL;
+}
+
+void shell_line_sort(shell_t* shell) {
+    for (size_t i = 0; i < 64; i++) {
+        for (size_t j = 0; j < 63 - i; j++) {
+            if (shell->script[j].index == 0 || shell->script[j + 1].index == 0)
+                continue;
+
+            if (shell->script[j].index <= shell->script[j + 1].index)
+                continue;
+
+            shell_line_t temp = shell->script[j];
+
+            shell->script[j] = shell->script[j + 1];
+            shell->script[j + 1] = temp;
+        }
+    }
 }

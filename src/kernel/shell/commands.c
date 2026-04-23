@@ -1,10 +1,24 @@
 #include "commands.h"
 
+#include "../lib/int.h"
 #include "../lib/io.h"
 #include "../lib/string.h"
 
 #include <stdint.h>
 
+// utility functions
+shell_cmd_t* shell_cmd_find(char* name) {
+    tolower(name); // TODO: duplicate to avoid modifying the original string
+
+    for (shell_cmd_t* cmd = shell_cmds; cmd->name != NULL; cmd++) {
+        if (strcmp(name, cmd->name) == 0)
+            return cmd;
+    }
+
+    return NULL;
+}
+
+// commands
 void shell_cmd_print(shell_t* shell) {
     while ((shell->token = strtok(NULL, " ")) != NULL) {
         if (shell->token[0] == '$') {
@@ -85,12 +99,48 @@ void shell_cmd_unset(shell_t* shell) {
         shell_var_unset(shell, shell->token);
     }
 
+    // TODO: implement this loop inside shell_var_unset if name is NULL
     for (size_t i = 0; i < 32; i++) {
         if (shell->variables[i].name == NULL)
             continue;
 
         shell->variables[i].name = NULL;
         shell->variables[i].value = NULL;
+    }
+}
+
+void shell_cmd_run(shell_t* shell) {
+    shell_line_sort(shell);
+
+    for (size_t i = 0; i < 64; i++) {
+        if (shell->script[i].index == 0)
+            continue;
+
+        shell->token = strtok(shell->script[i].buffer, " ");
+        shell_cmd_t* cmd = shell_cmd_find(shell->token);
+
+        if (cmd == NULL) {
+            puts("run: Command not found.\r\n"); return; // TODO: print line number
+        }
+
+        cmd->func(shell);
+    }
+}
+
+void shell_cmd_list(shell_t* shell) {
+    shell_line_sort(shell);
+
+    for (size_t i = 0; i < 64; i++) {
+        if (shell->script[i].index == 0)
+            continue;
+
+        char buffer[6];
+
+        itoa(shell->script[i].index, buffer, 10);
+        puts(buffer);
+        putchar(' ');
+        puts(shell->script[i].buffer);
+        puts("\r\n");
     }
 }
 
@@ -721,6 +771,8 @@ shell_cmd_t shell_cmds[] = {
     {"clear", clear},
     {"set", shell_cmd_set},
     {"unset", shell_cmd_unset},
+    {"run", shell_cmd_run},
+    {"list", shell_cmd_list},
     {"eval", shell_cmd_eval},
     {"peek", shell_cmd_peek},
     {"poke", shell_cmd_poke},
@@ -729,14 +781,3 @@ shell_cmd_t shell_cmds[] = {
     {"write", shell_cmd_write},
     {NULL, NULL}
 };
-
-shell_cmd_t* shell_cmd_find(char* name) {
-    tolower(name);
-
-    for (shell_cmd_t* cmd = shell_cmds; cmd->name != NULL; cmd++) {
-        if (strcmp(name, cmd->name) == 0)
-            return cmd;
-    }
-
-    return NULL;
-}
