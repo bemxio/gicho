@@ -21,8 +21,8 @@ void* malloc(size_t size) {
     static unsigned int bytes_allocated = 0;
     void* address = 0x500 + KERNEL_SIZE * 512;
 
-    bytes_allocated += size;
     address += bytes_allocated;
+    bytes_allocated += size;
 
     return address;
 }
