@@ -9,6 +9,7 @@
 void kmain() {
     shell_t shell;
     char buffer[256];
+    bool in_script = false;
 
     //shell_var_unset(&shell, NULL);
     shell_line_unset(&shell, 0);
@@ -25,7 +26,9 @@ void kmain() {
     puts(" bytes free.\r\n");
 
     for (;;) {
-        puts("\r\nReady.\r\n");
+        if (!in_script)
+            puts("\r\nReady.\r\n");
+
         gets(buffer);
 
         shell.token = strtok(buffer, " ");
@@ -42,6 +45,8 @@ void kmain() {
 
             if (!shell_line_set(&shell, index, shell.token + strlen(shell.token) + 1))
                 puts("Script size limit reached.\r\n");
+
+            in_script = true;
         } else {
             shell_cmd_t* cmd = shell_cmd_find(shell.token);
 
@@ -49,6 +54,8 @@ void kmain() {
                 puts("Command not found.\r\n");
             else
                 cmd->func(&shell);
+
+            in_script = false;
         }
     }
 }
