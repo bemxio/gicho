@@ -12,7 +12,7 @@ void kmain() {
     bool in_script = false;
 
     //shell_var_unset(&shell, NULL);
-    shell_line_unset(&shell, 0);
+    //shell_line_unset(&shell, 0);
 
     shell.output = NULL;
 

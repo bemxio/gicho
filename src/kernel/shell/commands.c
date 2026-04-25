@@ -95,18 +95,9 @@ void shell_cmd_set(shell_t* shell) {
 }
 
 void shell_cmd_unset(shell_t* shell) {
-    if ((shell->token = strtok(NULL, " ")) != NULL) {
-        shell_var_unset(shell, shell->token);
-    }
+    shell->token = strtok(NULL, " ");
 
-    // TODO: implement this loop inside shell_var_unset if name is NULL
-    for (size_t i = 0; i < 32; i++) {
-        if (shell->variables[i].name == NULL)
-            continue;
-
-        shell->variables[i].name = NULL;
-        shell->variables[i].value = NULL;
-    }
+    shell_var_unset(shell, shell->token);
 }
 
 void shell_cmd_run(shell_t* shell) {

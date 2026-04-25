@@ -71,6 +71,15 @@ shell_var_t* shell_var_set(shell_t* shell, char* name, shell_type_t type, void* 
 }
 
 void shell_var_unset(shell_t* shell, char* name) {
+    if (name == NULL) {
+        for (size_t i = 0; i < 32; i++) {
+            shell->variables[i].name = NULL;
+            shell->variables[i].value = NULL;
+        }
+
+        return;
+    }
+
     shell_var_t* variable = shell_var_get(shell, name);
 
     if (variable == NULL)
