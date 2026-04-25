@@ -8,10 +8,13 @@
 
 // utility functions
 shell_cmd_t* shell_cmd_find(char* name) {
-    tolower(name); // TODO: duplicate to avoid modifying the original string
+    char buffer[6]; // TODO: replace with malloc once it is implemented
+
+    strcpy(buffer, name);
+    tolower(buffer);
 
     for (shell_cmd_t* cmd = shell_cmds; cmd->name != NULL; cmd++) {
-        if (strcmp(name, cmd->name) == 0)
+        if (strcmp(buffer, cmd->name) == 0)
             return cmd;
     }
 

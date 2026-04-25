@@ -11,8 +11,8 @@ void kmain() {
     char buffer[256];
     bool in_script = false;
 
-    //shell_var_unset(&shell, NULL);
-    //shell_line_unset(&shell, 0);
+    shell_var_unset(&shell, NULL);
+    shell_line_unset(&shell, 0);
 
     shell.output = NULL;
 
