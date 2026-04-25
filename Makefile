@@ -19,6 +19,7 @@ BUILD_DIR = build
 EXECUTABLE = gicho.img
 
 SOURCES = $(wildcard $(SRC_DIR)/kernel/*.c) $(wildcard $(SRC_DIR)/kernel/**/*.c)
+HEADERS = $(wildcard $(SRC_DIR)/kernel/*.h) $(wildcard $(SRC_DIR)/kernel/**/*.h)
 OBJECTS = $(BUILD_DIR)/kernel/entry_point.o $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(SOURCES))
 
 # phony
@@ -36,11 +37,11 @@ clean:
 $(BUILD_DIR)/$(EXECUTABLE): $(BUILD_DIR)/bootloader.bin $(BUILD_DIR)/kernel.bin
 	cat $^ > $@
 
-$(BUILD_DIR)/bootloader.bin: $(wildcard $(SRC_DIR)/bootloader/*.asm) | $(BUILD_DIR)/kernel.bin $(BUILD_DIR)
+$(BUILD_DIR)/bootloader.bin: $(wildcard $(SRC_DIR)/bootloader/*.asm) | $(BUILD_DIR)/kernel.bin
 	$(AS) $(ASFLAGS) -DKERNEL_SIZE=$$(($(shell stat -c %s $(BUILD_DIR)/kernel.bin) / 512)) $< -o $@
 
-$(BUILD_DIR)/kernel.bin: $(OBJECTS)
-	$(LD) $(LDFLAGS) $^ -o $@ $(LDLIBS)
+$(BUILD_DIR)/kernel.bin: $(OBJECTS) $(HEADERS)
+	$(LD) $(LDFLAGS) $(OBJECTS) -o $@ $(LDLIBS)
 	truncate -s %512 $@
 
 # rules
