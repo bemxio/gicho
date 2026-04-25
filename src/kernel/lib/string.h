@@ -13,4 +13,6 @@ char* strtok(char* s, const char* delim);
 
 char* tolower(char* s);
 
+bool isalpha(const char* s);
+
 #endif

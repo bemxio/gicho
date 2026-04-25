@@ -84,3 +84,16 @@ char* tolower(char* s) {
 
     return s;
 }
+
+bool isalpha(const char* s) {
+    while (*s) {
+        if (!(*s >= 'A' && *s <= 'Z') &&
+            !(*s >= 'a' && *s <= 'z') &&
+            !(*s >= '0' && *s <= '9') && *s != '_')
+            return false;
+
+        s++;
+    }
+
+    return true;
+}

@@ -147,7 +147,7 @@ void shell_line_unset(shell_t* shell, uint16_t index) {
     line->buffer = NULL;
 }
 
-void shell_line_sort(shell_t* shell) {
+void shell_line_sort(shell_t* shell) { // TODO: implement sort() instead of sorting in shell_line_sort()
     for (size_t i = 0; i < 64; i++) {
         for (size_t j = 0; j < 63 - i; j++) {
             if (shell->script[j].index == 0 || shell->script[j + 1].index == 0)

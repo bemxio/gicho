@@ -22,21 +22,25 @@ shell_cmd_t* shell_cmd_find(char* name) {
 void shell_cmd_print(shell_t* shell) {
     while ((shell->token = strtok(NULL, " ")) != NULL) {
         if (shell->token[0] == '$') {
-            shell_var_t* variable = shell_var_get(shell, shell->token + 1);
+            if (shell->token[1] == '$') {
+                puts(shell->token + 1);
+            } else {
+                shell_var_t* variable = shell_var_get(shell, shell->token + 1);
 
-            if (variable == NULL) {
-                puts("print: Variable not found.\r\n"); return;
-            }
+                if (variable == NULL) {
+                    puts("print: Variable not found.\r\n"); return;
+                }
 
-            if (variable->type == SHELL_TYPE_INTEGER) {
-                char buffer[12];
+                if (variable->type == SHELL_TYPE_INTEGER) {
+                    char buffer[12];
 
-                itoa(*(uint16_t*)variable->value, buffer, 10);
-                puts(buffer);
-            } else if (variable->type == SHELL_TYPE_BOOLEAN) {
-                puts(*(bool*)variable->value ? "true" : "false");
-            } else if (variable->type == SHELL_TYPE_STRING) {
-                puts((char*)variable->value);
+                    itoa(*(uint16_t*)variable->value, buffer, 10);
+                    puts(buffer);
+                } else if (variable->type == SHELL_TYPE_BOOLEAN) {
+                    puts(*(bool*)variable->value ? "true" : "false");
+                } else if (variable->type == SHELL_TYPE_STRING) {
+                    puts((char*)variable->value);
+                }
             }
         } else {
             puts(shell->token);
@@ -45,8 +49,7 @@ void shell_cmd_print(shell_t* shell) {
         putchar(' ');
     }
 
-    putchar('\r');
-    putchar('\n');
+    puts("\r\n");
 }
 
 void shell_cmd_set(shell_t* shell) {
@@ -55,6 +58,10 @@ void shell_cmd_set(shell_t* shell) {
     }
 
     char* name = shell->token;
+
+    if (!isalpha(name)) {
+        puts("set: Invalid variable name.\r\n"); return;
+    }
 
     if ((shell->token = strtok(NULL, " ")) == NULL) {
         puts("set: Variable value not specified.\r\n"); return;
@@ -95,9 +102,7 @@ void shell_cmd_set(shell_t* shell) {
 }
 
 void shell_cmd_unset(shell_t* shell) {
-    shell->token = strtok(NULL, " ");
-
-    shell_var_unset(shell, shell->token);
+    shell_var_unset(shell, strtok(NULL, " "));
 }
 
 void shell_cmd_run(shell_t* shell) {
