@@ -116,6 +116,8 @@ void shell_cmd_run(shell_t* shell) {
         if (shell->script[i].index == 0)
             continue;
 
+        shell_line_fix(shell, shell->script[i].index);
+
         shell->token = strtok(shell->script[i].buffer, " ");
         shell_cmd_t* cmd = shell_cmd_find(shell->token);
 
@@ -134,11 +136,15 @@ void shell_cmd_list(shell_t* shell) {
         if (shell->script[i].index == 0)
             continue;
 
+        shell_line_fix(shell, shell->script[i].index);
+
         char buffer[6];
 
         itoa(shell->script[i].index, buffer, 10);
         puts(buffer);
+
         putchar(' ');
+
         puts(shell->script[i].buffer);
         puts("\r\n");
     }

@@ -111,8 +111,9 @@ shell_line_t* shell_line_set(shell_t* shell, uint16_t index, char* buffer) {
         return NULL;
 
     line->index = index;
-    line->buffer = malloc(strlen(buffer) + 1);
-    
+    line->length = strlen(buffer);
+    line->buffer = malloc(line->length + 1);
+
     strcpy(line->buffer, buffer);
 
     return line;
@@ -151,5 +152,17 @@ void shell_line_sort(shell_t* shell) {
             shell->script[j] = shell->script[j + 1];
             shell->script[j + 1] = temp;
         }
+    }
+}
+
+void shell_line_fix(shell_t* shell, uint16_t index) {
+    shell_line_t* line = shell_line_get(shell, index);
+
+    if (line == NULL)
+        return;
+
+    for (size_t i = 0; i < line->length; i++) {
+        if (line->buffer[i] == '\0')
+            line->buffer[i] = ' ';
     }
 }

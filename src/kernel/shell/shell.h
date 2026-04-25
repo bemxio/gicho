@@ -19,6 +19,7 @@ typedef struct {
 
 typedef struct {
     uint16_t index;
+    uint8_t length;
     char* buffer;
 } shell_line_t;
 
@@ -37,5 +38,6 @@ shell_line_t* shell_line_get(shell_t* shell, uint16_t index);
 shell_line_t* shell_line_set(shell_t* shell, uint16_t index, char* buffer);
 void shell_line_unset(shell_t* shell, uint16_t index);
 void shell_line_sort(shell_t* shell);
+void shell_line_fix(shell_t* shell, uint16_t index);
 
 #endif
