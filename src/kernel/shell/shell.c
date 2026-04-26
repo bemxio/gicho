@@ -5,8 +5,6 @@
 #include "../lib/string.h"
 #include "commands.h"
 
-#include <stddef.h>
-
 // variable functions
 shell_var_t* shell_var_new(shell_t* shell) {
     for (size_t i = 0; i < VARIABLE_COUNT; i++) {

@@ -2,6 +2,7 @@
 #define SHELL_H
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 
 #define VARIABLE_COUNT 32
@@ -31,6 +32,8 @@ typedef struct shell_t {
     shell_var_t variables[VARIABLE_COUNT];
     shell_line_t script[LINE_COUNT];
     void* output;
+    bool in_script;
+    size_t line_index;
 } shell_t;
 
 shell_var_t* shell_var_get(shell_t* shell, char* name);

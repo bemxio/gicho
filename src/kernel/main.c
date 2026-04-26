@@ -12,12 +12,13 @@ void kmain() {
     shell_t shell;
 
     char buffer[BUFFER_SIZE];
-    bool in_script = false;
+    bool is_scripting = false;
 
     shell_var_unset(&shell, NULL);
     shell_line_unset(&shell, 0);
 
     shell.output = NULL;
+    shell.in_script = false;
 
     uint16_t bytes_free = 0xffff - KERNEL_SIZE * 512 - 0x500;
     itoa(bytes_free, buffer, 10);
@@ -29,7 +30,7 @@ void kmain() {
     puts(" bytes free.\r\n");
 
     for (;;) {
-        if (!in_script)
+        if (!is_scripting)
             puts("\r\nReady.\r\n");
 
         gets(buffer);
@@ -49,7 +50,7 @@ void kmain() {
             if (!shell_line_set(&shell, index, shell.token + strlen(shell.token) + 1))
                 puts("Script size limit reached.\r\n");
 
-            in_script = true;
+            is_scripting = true;
         } else {
             shell_cmd_t* cmd = shell_cmd_find(shell.token);
 
@@ -58,7 +59,7 @@ void kmain() {
             else
                 cmd->func(&shell);
 
-            in_script = false;
+            is_scripting = false;
         }
     }
 }

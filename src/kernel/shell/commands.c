@@ -109,23 +109,60 @@ void shell_cmd_unset(shell_t* shell) {
 }
 
 void shell_cmd_run(shell_t* shell) {
-    shell_line_sort(shell);
+    if (shell->in_script) {
+        puts("run: Cannot run script within a script.\r\n"); return;
+    }
 
-    for (size_t i = 0; i < LINE_COUNT; i++) {
-        if (shell->script[i].index == 0)
+    shell_line_sort(shell);
+    shell->in_script = true;
+
+    for (shell->line_index = 0; shell->line_index < LINE_COUNT; shell->line_index++) {
+        shell_line_t* line = &shell->script[shell->line_index];
+        shell_cmd_t* cmd;
+
+        if (line->index == 0)
             continue;
 
-        shell_line_fix(shell, shell->script[i].index);
+        shell_line_fix(shell, line->index);
+        shell->token = strtok(line->buffer, " ");
 
-        shell->token = strtok(shell->script[i].buffer, " ");
-        shell_cmd_t* cmd = shell_cmd_find(shell->token);
-
-        if (cmd == NULL) {
+        if ((cmd = shell_cmd_find(shell->token)) == NULL) {
             puts("run: Command not found.\r\n"); return; // TODO: print line number
         }
 
         cmd->func(shell);
     }
+
+    shell->in_script = false;
+}
+
+void shell_cmd_goto(shell_t* shell) {
+    if (!shell->in_script) {
+        puts("goto: Not in a script.\r\n"); return;
+    }
+
+    if ((shell->token = strtok(NULL, " ")) == NULL) {
+        puts("goto: Line number not specified.\r\n"); return;
+    }
+
+    if (!isnumeric(shell->token)) {
+        puts("goto: Invalid line number.\r\n"); return;
+    }
+
+    uint16_t index = atoi(shell->token);
+
+    if (index == 0) {
+        puts("goto: Invalid line number.\r\n"); return;
+    }
+
+    for (size_t i = 0; i < LINE_COUNT; i++) {
+        if (shell->script[i].index != index)
+            continue;
+
+        shell->line_index = i - 1; return;
+    }
+
+    puts("goto: Line number not found.\r\n");
 }
 
 void shell_cmd_list(shell_t* shell) {
@@ -777,6 +814,7 @@ shell_cmd_t shell_cmds[] = {
     {"set", shell_cmd_set},
     {"unset", shell_cmd_unset},
     {"run", shell_cmd_run},
+    {"goto", shell_cmd_goto},
     {"list", shell_cmd_list},
     {"eval", shell_cmd_eval},
     {"peek", shell_cmd_peek},
