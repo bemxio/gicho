@@ -9,7 +9,7 @@
 
 // variable functions
 shell_var_t* shell_var_new(shell_t* shell) {
-    for (size_t i = 0; i < 32; i++) {
+    for (size_t i = 0; i < VARIABLE_COUNT; i++) {
         if (shell->variables[i].name == NULL)
             return &shell->variables[i];
     }
@@ -18,7 +18,7 @@ shell_var_t* shell_var_new(shell_t* shell) {
 }
 
 shell_var_t* shell_var_get(shell_t* shell, char* name) {
-    for (size_t i = 0; i < 32; i++) {
+    for (size_t i = 0; i < VARIABLE_COUNT; i++) {
         if (shell->variables[i].name == NULL)
             continue;
 
@@ -72,7 +72,7 @@ shell_var_t* shell_var_set(shell_t* shell, char* name, shell_type_t type, void* 
 
 void shell_var_unset(shell_t* shell, char* name) {
     if (name == NULL) {
-        for (size_t i = 0; i < 32; i++) {
+        for (size_t i = 0; i < VARIABLE_COUNT; i++) {
             shell->variables[i].name = NULL;
             shell->variables[i].value = NULL;
         }
@@ -91,7 +91,7 @@ void shell_var_unset(shell_t* shell, char* name) {
 
 // script functions
 shell_line_t* shell_line_new(shell_t* shell) {
-    for (size_t i = 0; i < 64; i++) {
+    for (size_t i = 0; i < LINE_COUNT; i++) {
         if (shell->script[i].index == 0 && shell->script[i].buffer == NULL)
             return &shell->script[i];
     }
@@ -100,7 +100,7 @@ shell_line_t* shell_line_new(shell_t* shell) {
 }
 
 shell_line_t* shell_line_get(shell_t* shell, uint16_t index) {
-    for (size_t i = 0; i < 64; i++) {
+    for (size_t i = 0; i < LINE_COUNT; i++) {
         if (shell->script[i].index == 0 || shell->script[i].index != index)
             continue;
 
@@ -130,7 +130,7 @@ shell_line_t* shell_line_set(shell_t* shell, uint16_t index, char* buffer) {
 
 void shell_line_unset(shell_t* shell, uint16_t index) {
     if (index == 0) {
-        for (size_t i = 0; i < 64; i++) {
+        for (size_t i = 0; i < LINE_COUNT; i++) {
             shell->script[i].index = 0;
             shell->script[i].buffer = NULL;
         }
@@ -148,8 +148,8 @@ void shell_line_unset(shell_t* shell, uint16_t index) {
 }
 
 void shell_line_sort(shell_t* shell) { // TODO: implement sort() instead of sorting in shell_line_sort()
-    for (size_t i = 0; i < 64; i++) {
-        for (size_t j = 0; j < 63 - i; j++) {
+    for (size_t i = 0; i < LINE_COUNT; i++) {
+        for (size_t j = 0; j < LINE_COUNT - i - 1; j++) {
             if (shell->script[j].index == 0 || shell->script[j + 1].index == 0)
                 continue;
 

@@ -6,9 +6,12 @@
 #include "shell/commands.h"
 #include "shell/shell.h"
 
+#define BUFFER_SIZE 256
+
 void kmain() {
     shell_t shell;
-    char buffer[256];
+
+    char buffer[BUFFER_SIZE];
     bool in_script = false;
 
     shell_var_unset(&shell, NULL);

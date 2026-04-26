@@ -70,7 +70,7 @@ void shell_cmd_set(shell_t* shell) {
         puts("set: Variable value not specified.\r\n"); return;
     }
 
-    char* value = shell->token;
+    char* value = shell->token; // TODO: use everything after the name as value (strlen(name) + 2)
 
     if (isnumeric(value)) {
         uint16_t number = atoi(value);
@@ -111,7 +111,7 @@ void shell_cmd_unset(shell_t* shell) {
 void shell_cmd_run(shell_t* shell) {
     shell_line_sort(shell);
 
-    for (size_t i = 0; i < 64; i++) {
+    for (size_t i = 0; i < LINE_COUNT; i++) {
         if (shell->script[i].index == 0)
             continue;
 
@@ -131,7 +131,7 @@ void shell_cmd_run(shell_t* shell) {
 void shell_cmd_list(shell_t* shell) {
     shell_line_sort(shell);
 
-    for (size_t i = 0; i < 64; i++) {
+    for (size_t i = 0; i < LINE_COUNT; i++) {
         if (shell->script[i].index == 0)
             continue;
 

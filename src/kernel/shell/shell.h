@@ -4,6 +4,9 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#define VARIABLE_COUNT 32
+#define LINE_COUNT 64
+
 typedef enum {
     SHELL_TYPE_INTEGER,
     //SHELL_TYPE_FLOAT,
@@ -25,8 +28,8 @@ typedef struct {
 
 typedef struct shell_t {
     char* token;
-    shell_var_t variables[32];
-    shell_line_t script[64];
+    shell_var_t variables[VARIABLE_COUNT];
+    shell_line_t script[LINE_COUNT];
     void* output;
 } shell_t;
 
