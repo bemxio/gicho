@@ -2,7 +2,7 @@
 PREFIX = ia16-elf
 
 CC = $(PREFIX)-gcc
-CCFLAGS = -Wall -ffreestanding
+CCFLAGS = -Wall -ffreestanding -DCOMMIT_HASH=\"$(shell git rev-parse --short HEAD)\"
 
 LD = $(PREFIX)-ld
 LDFLAGS = -Ttext 0x0500 --oformat binary

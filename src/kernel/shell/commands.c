@@ -653,8 +653,8 @@ void shell_cmd_read(shell_t* shell) {
         puts("read: Offset out of range.\r\n"); return;
     }
 
-    uint16_t segment = address >> 16;
-    uint16_t offset = address & 0xffff;
+    uint16_t segment = address >> 4;
+    uint16_t offset = address & 0xf;
 
     uint16_t cylinders = position / (16 * 63);
     uint8_t heads = (position / 63) % 16;
@@ -794,8 +794,8 @@ void shell_cmd_write(shell_t* shell) {
         puts("write: Offset out of range.\r\n"); return;
     }
 
-    uint16_t segment = address >> 16;
-    uint16_t offset = address & 0xffff;
+    uint16_t segment = address >> 4;
+    uint16_t offset = address & 0xf;
 
     uint16_t cylinders = position / (16 * 63);
     uint8_t heads = (position / 63) % 16;

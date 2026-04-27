@@ -6,13 +6,13 @@
 #include "shell/commands.h"
 #include "shell/shell.h"
 
-#define BUFFER_SIZE 256
+#define BUFFER_SIZE 256 // buffer size for shell input
 
 void kmain() {
     shell_t shell;
 
     char buffer[BUFFER_SIZE];
-    bool is_scripting = false;
+    bool is_scripting = false; // used for printing ready message
 
     shell_var_unset(&shell, NULL);
     shell_line_unset(&shell, 0);
@@ -26,7 +26,13 @@ void kmain() {
 
     clear();
 
-    puts("Gicho v2.0\r\n");
+    puts("Gicho v2.0");
+
+    #ifdef COMMIT_HASH
+        puts(" (" COMMIT_HASH ")");
+    #endif
+
+    puts("\r\n");
     puts(buffer);
     puts(" bytes free.\r\n");
 
