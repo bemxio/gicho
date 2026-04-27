@@ -52,7 +52,19 @@ void shell_cmd_print(shell_t* shell) {
         putchar(' ');
     }
 
-    puts("\r\n");
+    if (!shell->print_without_newline)
+        puts("\r\n");
+}
+
+void shell_cmd_input(shell_t* shell) {
+    shell->print_without_newline = true;
+
+    shell_cmd_print(shell);
+
+    if (shell->output != NULL)
+        gets(shell->output);
+
+    shell->print_without_newline = false;
 }
 
 void shell_cmd_set(shell_t* shell) {
@@ -75,17 +87,29 @@ void shell_cmd_set(shell_t* shell) {
     if (isnumeric(value)) {
         uint16_t number = atoi(value);
 
-        if (shell_var_set(shell, name, SHELL_TYPE_INTEGER, &number) == NULL)
+        if (shell_var_set(shell, name, SHELL_TYPE_INTEGER, &number, true) == NULL)
             puts("set: Variable limit reached.\r\n");
     } else if (strcmp(value, "true") == 0 || strcmp(value, "false") == 0) {
         bool boolean = strcmp(value, "true") == 0;
 
-        if (shell_var_set(shell, name, SHELL_TYPE_BOOLEAN, &boolean) == NULL)
+        if (shell_var_set(shell, name, SHELL_TYPE_BOOLEAN, &boolean, true) == NULL)
             puts("set: Variable limit reached.\r\n");
     } else {
         shell_cmd_t* cmd = shell_cmd_find(value);
 
-        if (cmd != NULL) {
+        if (strcmp(cmd->name, "input") == 0) {
+            char* buffer = malloc(INPUT_BUFFER_SIZE);
+
+            shell->token = value;
+            shell->output = buffer;
+
+            cmd->func(shell);
+
+            if (shell_var_set(shell, name, SHELL_TYPE_STRING, buffer, false) == NULL)
+                puts("set: Variable limit reached.\r\n");
+
+            shell->output = NULL;
+        } else if (cmd != NULL) {
             uint16_t output = 0;
 
             shell->token = value;
@@ -93,12 +117,12 @@ void shell_cmd_set(shell_t* shell) {
 
             cmd->func(shell);
 
-            if (shell_var_set(shell, name, SHELL_TYPE_INTEGER, &output) == NULL)
+            if (shell_var_set(shell, name, SHELL_TYPE_INTEGER, &output, true) == NULL)
                 puts("set: Variable limit reached.\r\n");
 
             shell->output = NULL;
         } else {
-            if (shell_var_set(shell, name, SHELL_TYPE_STRING, value) == NULL)
+            if (shell_var_set(shell, name, SHELL_TYPE_STRING, value, true) == NULL)
                 puts("set: Variable limit reached.\r\n");
         }
     }
@@ -810,6 +834,7 @@ void shell_cmd_write(shell_t* shell) {
 
 shell_cmd_t shell_cmds[] = {
     {"print", shell_cmd_print},
+    {"input", shell_cmd_input},
     {"clear", clear},
     {"set", shell_cmd_set},
     {"unset", shell_cmd_unset},

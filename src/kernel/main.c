@@ -19,6 +19,7 @@ void kmain() {
 
     shell.output = NULL;
     shell.in_script = false;
+    shell.print_without_newline = false;
 
     uint16_t bytes_free = 0xffff - KERNEL_SIZE * 512 - 0x500;
     itoa(bytes_free, buffer, 10);

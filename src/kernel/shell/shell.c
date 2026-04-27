@@ -29,7 +29,7 @@ shell_var_t* shell_var_get(shell_t* shell, char* name) {
     return NULL;
 }
 
-shell_var_t* shell_var_set(shell_t* shell, char* name, shell_type_t type, void* value) {
+shell_var_t* shell_var_set(shell_t* shell, char* name, shell_type_t type, void* value, bool allocate_value) {
     shell_var_t* variable = shell_var_get(shell, name);
 
     if (variable == NULL)
@@ -44,6 +44,11 @@ shell_var_t* shell_var_set(shell_t* shell, char* name, shell_type_t type, void* 
     }
 
     variable->type = type;
+
+    if (!allocate_value) {
+        variable->value = value;
+        return variable;
+    }
 
     switch (type) {
         case SHELL_TYPE_INTEGER:

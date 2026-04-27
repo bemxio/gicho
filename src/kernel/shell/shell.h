@@ -7,6 +7,7 @@
 
 #define VARIABLE_COUNT 32
 #define LINE_COUNT 64
+#define INPUT_BUFFER_SIZE 256
 
 typedef enum {
     SHELL_TYPE_INTEGER,
@@ -34,10 +35,11 @@ typedef struct shell_t {
     void* output;
     bool in_script;
     size_t line_index;
+    bool print_without_newline;
 } shell_t;
 
 shell_var_t* shell_var_get(shell_t* shell, char* name);
-shell_var_t* shell_var_set(shell_t* shell, char* name, shell_type_t type, void* value);
+shell_var_t* shell_var_set(shell_t* shell, char* name, shell_type_t type, void* value, bool allocate_value);
 void shell_var_unset(shell_t* shell, char* name);
 
 shell_line_t* shell_line_get(shell_t* shell, uint16_t index);
