@@ -52,16 +52,16 @@ shell_var_t* shell_var_set(shell_t* shell, char* name, shell_type_t type, void* 
 
     switch (type) {
         case SHELL_TYPE_INTEGER:
-            variable->value = malloc(sizeof(uint16_t));
-            *(uint16_t*)variable->value = *(uint16_t*)value;
+            if (variable->value == NULL)
+                variable->value = malloc(sizeof(uint16_t));
 
-            break;
+            *(uint16_t*)variable->value = *(uint16_t*)value; break;
 
         case SHELL_TYPE_BOOLEAN:
-            variable->value = malloc(sizeof(bool));
-            *(bool*)variable->value = *(bool*)value;
+            if (variable->value == NULL)
+                variable->value = malloc(sizeof(bool));
 
-            break;
+            *(bool*)variable->value = *(bool*)value; break;
 
         case SHELL_TYPE_STRING:
             variable->value = malloc(strlen((char*)value) + 1);
@@ -122,9 +122,13 @@ shell_line_t* shell_line_set(shell_t* shell, uint16_t index, char* buffer) {
     if (line == NULL)
         return NULL;
 
+    uint8_t length = line->length;
+
     line->index = index;
     line->length = strlen(buffer);
-    line->buffer = malloc(line->length + 1);
+
+    if (line->length <= length)
+        line->buffer = malloc(line->length + 1);
 
     strcpy(line->buffer, buffer);
 
