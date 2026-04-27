@@ -8,6 +8,6 @@
 void* memset(void* s, int c, size_t n);
 void* memcpy(void* restrict s1, const void* restrict s2, size_t n);
 
-void* malloc(size_t size);
+void* malloc(size_t size); // TODO: implement a proper memory allocator
 
 #endif

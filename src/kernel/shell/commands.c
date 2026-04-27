@@ -8,7 +8,7 @@
 
 // utility functions
 shell_cmd_t* shell_cmd_find(char* name) {
-    char buffer[6]; // TODO: replace with malloc once it is implemented
+    char buffer[6]; // TODO: replace with malloc once it is properly implemented
 
     strcpy(buffer, name);
     tolower(buffer);
@@ -156,7 +156,7 @@ void shell_cmd_run(shell_t* shell) {
         shell->token = strtok(line->buffer, " ");
 
         if ((cmd = shell_cmd_find(shell->token)) == NULL) {
-            puts("run: Command not found.\r\n"); return; // TODO: print line number
+            puts("run: Command not found.\r\n"); return;
         }
 
         cmd->func(shell);

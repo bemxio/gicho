@@ -11,6 +11,6 @@ char* itoa(uint32_t n, char* buf, char base);
 //bool isdigit(char c);
 bool isnumeric(const char* s);
 
-//void sort(uint16_t* arr, size_t n); // TODO: implement sort() instead of sorting in shell_line_sort()
+//void sort(uint16_t* arr, size_t n);
 
 #endif

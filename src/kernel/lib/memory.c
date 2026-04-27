@@ -19,7 +19,7 @@ void* memcpy(void* restrict s1, const void* restrict s2, size_t n) {
 
 void* malloc(size_t size) {
     static unsigned int bytes_allocated = 0;
-    void* address = 0x500 + KERNEL_SIZE * 512; // TODO: implement a proper memory allocator
+    void* address = 0x500 + KERNEL_SIZE * 512;
 
     address += bytes_allocated;
     bytes_allocated += size;
