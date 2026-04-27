@@ -68,11 +68,14 @@ void shell_cmd_input(shell_t* shell) {
 }
 
 void shell_cmd_set(shell_t* shell) {
+    char* name;
+    char* value;
+
     if ((shell->token = strtok(NULL, " ")) == NULL) {
         puts("set: Variable name not specified.\r\n"); return;
     }
 
-    char* name = shell->token;
+    name = shell->token;
 
     if (!isalpha(name)) {
         puts("set: Invalid variable name.\r\n"); return;
@@ -82,7 +85,7 @@ void shell_cmd_set(shell_t* shell) {
         puts("set: Variable value not specified.\r\n"); return;
     }
 
-    char* value = shell->token; // TODO: use everything after the name as value (strlen(name) + 2)
+    value = shell->token;
 
     if (isnumeric(value)) {
         uint16_t number = atoi(value);
@@ -122,6 +125,8 @@ void shell_cmd_set(shell_t* shell) {
 
             shell->output = NULL;
         } else {
+            value[strlen(value)] = ' '; // replace null terminator caused by strtok
+
             if (shell_var_set(shell, name, SHELL_TYPE_STRING, value, true) == NULL)
                 puts("set: Variable limit reached.\r\n");
         }
